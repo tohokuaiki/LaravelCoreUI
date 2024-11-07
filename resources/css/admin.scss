@@ -1,0 +1,19 @@
+// @tailwind base;
+// @tailwind components;
+// @tailwind utilities;
+
+/* coreui */
+// @import "@coreui/coreui/scss/coreui";
+// @import "@coreui/chartjs/scss/coreui-chartjs";
+// @import "../js/coreui/scss/theme";
+// @import "../js/coreui/scss/examples";
+@import './coreui-template.css'; // compiled above 4 files.
+
+//// If you use tailwindcss, you will encounter some conflicts like below.
+// .collapse.show {
+//     visibility: visible;
+// }
+// a {
+//     color: rgba(var(--cui-link-color-rgb), var(--cui-link-opacity, 1));
+//     text-decoration: underline;
+// }
