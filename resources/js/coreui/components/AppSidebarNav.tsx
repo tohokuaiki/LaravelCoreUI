@@ -44,12 +44,6 @@ export const AppSidebarNav = ({ items }:
 
     const { ADMIN_PATH } = useGlobalConstantsContext()
 
-    useEffect(() => {
-      if (item.to) {
-        item.to = ADMIN_PATH + item.to
-      }
-    }, [])
-
     const { component, name, badge, icon, ...rest } = item
 
     const Component = component

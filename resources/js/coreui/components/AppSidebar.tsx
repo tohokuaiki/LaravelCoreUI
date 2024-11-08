@@ -12,6 +12,7 @@ import {
 import CIcon from '@coreui/icons-react'
 
 import { AppSidebarNav } from './AppSidebarNav'
+import useGlobalConstantsContext from '@/Contexts/GlobalConstants'
 
 import { logo } from '../assets/brand/logo'
 import { sygnet } from '../assets/brand/sygnet'
@@ -28,6 +29,20 @@ const AppSidebar = () => {
   const dispatch = useDispatch()
   const unfoldable = useSelector((state: SideBarState) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state: SideBarState) => state.sidebarShow)
+
+  const { ADMIN_PATH } = useGlobalConstantsContext();
+  navigation.map((item, index) => {
+    if (item.to) {
+      item.to = ADMIN_PATH + item.to
+    }
+    if (item.items) {
+      item.items.map((_item, _index) => {
+        if (_item.to) {
+          _item.to = ADMIN_PATH + item.to
+        }
+      })
+    }
+  })
 
   return (
     <CSidebar
