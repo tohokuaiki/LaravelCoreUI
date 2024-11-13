@@ -8,8 +8,9 @@ import { CSpinner } from '@coreui/react';
 import { Provider } from 'react-redux'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AppContent, AppSidebar, AppFooter, AppHeader } from '../../js/coreui/components/index'
-import useGlobalConstantsContext from '@/Contexts/GlobalConstants';
 import store from '../coreui/store'
+import { useCookies } from 'react-cookie';
+import axios from "axios";
 
 export default function Authenticated({
     header,
@@ -21,7 +22,13 @@ export default function Authenticated({
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
-    const { ADMIN_PATH } = useGlobalConstantsContext()
+    const [cookies, setCookie, removeCookie] = useCookies(['XSRF-TOKEN']);    
+    axios.interceptors.request.use(config => {
+        config.headers!['X-XSRF-TOKEN'] = cookies['XSRF-TOKEN']
+        return config;
+    }, error => {
+        return Promise.reject(error)
+    })
 
     return (
         <>

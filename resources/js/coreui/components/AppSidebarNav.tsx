@@ -6,8 +6,7 @@ import SimpleBar from 'simplebar-react'
 import 'simplebar-react/dist/simplebar.min.css'
 
 import { CBadge, CNavLink, CSidebarNav } from '@coreui/react'
-import useGlobalConstantsContext from '@/Contexts/GlobalConstants'
-import { CIconType, CINavigation } from '../_nav'
+import { CIconType, CINavigation } from '@/Components/AdminNav'
 
 export const AppSidebarNav = ({ items }:
   { items: CINavigation[]; }) => {
@@ -41,8 +40,6 @@ export const AppSidebarNav = ({ items }:
   }
 
   const navItem = (item: CINavigation, index: number, indent: boolean = false) => {
-
-    const { ADMIN_PATH } = useGlobalConstantsContext()
 
     const { component, name, badge, icon, ...rest } = item
 

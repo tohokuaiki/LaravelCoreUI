@@ -1,4 +1,4 @@
-import { HTMLAttributes } from 'react';
+import { HTMLAttributes, ReactNode } from 'react';
 
 export default function InputError({
     message,
@@ -13,4 +13,8 @@ export default function InputError({
             {message}
         </p>
     ) : null;
+}
+
+export const ErrorMessage = ({errors }: { errors: string[]; }):ReactNode => {
+    return errors ? <ul>{errors.map((e, i) => <li key={i}>{e}</li>)}</ul> : ""
 }

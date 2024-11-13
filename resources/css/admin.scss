@@ -1,19 +1,26 @@
-// @tailwind base;
-// @tailwind components;
-// @tailwind utilities;
+@use './pagination';
+@use './coreui-template.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 
 /* coreui */
-// @import "@coreui/coreui/scss/coreui";
+/* // @import "@coreui/coreui/scss/coreui";
 // @import "@coreui/chartjs/scss/coreui-chartjs";
 // @import "../js/coreui/scss/theme";
-// @import "../js/coreui/scss/examples";
-@import './coreui-template.css'; // compiled above 4 files.
+// @import "../js/coreui/scss/examples"; */
 
-//// If you use tailwindcss, you will encounter some conflicts like below.
-// .collapse.show {
-//     visibility: visible;
-// }
-// a {
-//     color: rgba(var(--cui-link-color-rgb), var(--cui-link-opacity, 1));
-//     text-decoration: underline;
-// }
+
+/* //// If you use tailwindcss, you will encounter some conflicts like below. */
+.collapse.show {
+    visibility: visible;
+}
+a {
+    color: rgba(var(--cui-link-color-rgb), var(--cui-link-opacity, 1));
+    text-decoration: underline;
+}
+.was-validated :invalid ~ .invalid-feedback, .was-validated :invalid ~ .invalid-tooltip, .is-invalid ~ .invalid-feedback, .is-invalid ~ .invalid-tooltip{
+    margin-bottom: 1em;
+}

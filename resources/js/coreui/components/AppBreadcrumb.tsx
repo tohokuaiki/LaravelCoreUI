@@ -1,7 +1,7 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
 
-import routes, { RouteProp } from '../routes'
+import routes, { RouteProp } from '@/routes/admin'
 
 import { CBreadcrumb, CBreadcrumbItem } from '@coreui/react'
 import useGlobalConstantsContext from '@/Contexts/GlobalConstants'
@@ -14,7 +14,8 @@ type BreadCrumbElement = {
 
 const AppBreadcrumb = () => {
 
-  const { ADMIN_PATH } = useGlobalConstantsContext()
+  const {globalConstants} = useGlobalConstantsContext()
+  const { ADMIN_PATH } = globalConstants; 
 
   const currentLocation = useLocation().pathname
 

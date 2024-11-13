@@ -3,12 +3,13 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { CContainer, CSpinner } from '@coreui/react'
 
 // routes config
-import routes from '../routes'
+import routes from '@/routes/admin'
 import useGlobalConstantsContext from '@/Contexts/GlobalConstants'
 
 const AppContent = () => {
 
-  const { ADMIN_PATH } = useGlobalConstantsContext()
+  const {globalConstants} = useGlobalConstantsContext()
+  const { ADMIN_PATH } = globalConstants; 
 
   return (
     <CContainer className="px-4 hogehoge" lg>
