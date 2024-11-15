@@ -24,11 +24,19 @@ class RegisteredUserController extends Controller
     }
 
     /**
+     * Display the registration invalid view.
+     */
+    public function registerInvalid(): Response
+    {
+        return Inertia::render('Auth/RegisterInvalid');
+    }
+
+    /**
      * Handle an incoming registration request.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request):  \Symfony\Component\HttpFoundation\Response
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -46,6 +54,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return Inertia::location(route('coreuiadmin', absolute: false));
     }
 }

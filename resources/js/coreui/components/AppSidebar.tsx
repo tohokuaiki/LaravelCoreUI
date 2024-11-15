@@ -35,12 +35,12 @@ const AppSidebar = () => {
   const { ADMIN_PATH } = globalConstants; 
   
   navigation.map((item, index) => {
-    if (item.to) {
+    if (item.to && !item.to.startsWith(ADMIN_PATH)) {
       item.to = ADMIN_PATH + item.to
     }
     if (item.items) {
       item.items.map((_item, _index) => {
-        if (_item.to) {
+        if (_item.to && !_item.to.startsWith(ADMIN_PATH)) {
           _item.to = ADMIN_PATH + _item.to
         }
       })

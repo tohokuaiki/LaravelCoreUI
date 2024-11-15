@@ -7,9 +7,13 @@ import 'simplebar-react/dist/simplebar.min.css'
 
 import { CBadge, CNavLink, CSidebarNav } from '@coreui/react'
 import { CIconType, CINavigation } from '@/Components/AdminNav'
+import { usePage } from '@inertiajs/react'
+import Util from '@/lib/util'
 
 export const AppSidebarNav = ({ items }:
   { items: CINavigation[]; }) => {
+
+  const user = usePage().props.auth.user;
 
   const navLink = (
     name: string,
@@ -42,6 +46,12 @@ export const AppSidebarNav = ({ items }:
   const navItem = (item: CINavigation, index: number, indent: boolean = false) => {
 
     const { component, name, badge, icon, ...rest } = item
+
+    if (item.role) {
+      if (!user || !Util.hasRole(user, item.role)) {
+        return "";
+      }
+    }
 
     const Component = component
     return (

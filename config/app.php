@@ -126,4 +126,8 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    | Allow register New Administrator or not.
+    */
+    'allow_new_user' => env('APP_ALLOW_NEW_USER', false),
 ];

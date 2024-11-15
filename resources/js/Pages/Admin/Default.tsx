@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { GlobalConstantsProvider, GlobalConstantsType } from '@/Contexts/GlobalConstants';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import BaseLoading from '@/Components/Baseloading';
 import { useState } from 'react';
 import { CookiesProvider } from 'react-cookie';

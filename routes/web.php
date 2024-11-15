@@ -16,7 +16,7 @@ Route::get('/', function () {
 })->name('root');
 
 $admin_path = config('app.admin_path');
-Route::get($admin_path . '/{operation?}/{target?}/{property?}', function () use ($admin_path) {
+Route::prefix($admin_path)->get('/{operation?}/{target?}/{property?}', function () use ($admin_path) {
     return Inertia::render('Default', [
         'ADMIN_PATH' => $admin_path,
         'config' => config('broadtools'),

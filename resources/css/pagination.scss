@@ -1,0 +1,41 @@
+/* rc-pagination */
+ul.pagination{
+    li {
+        &.page-prev a.page-link{
+            border-bottom-left-radius: var(--cui-pagination-border-radius);
+            border-top-left-radius: var(--cui-pagination-border-radius);
+        }
+        &.page-next a.page-link{
+            border-bottom-right-radius: var(--cui-pagination-border-radius);
+            border-top-right-radius: var(--cui-pagination-border-radius);
+            border-left: none;
+        }
+        a.page-link{
+            cursor: pointer;
+        }
+        &.page-item-active a.page-link,&.page-disabled a.page-link{
+            cursor: default;
+        }
+    }
+
+    .page-disabled>.page-link {
+        color: var(--cui-pagination-disabled-color);
+        pointer-events: none;
+        background-color: var(--cui-pagination-disabled-bg);
+        border-color: var(--cui-pagination-disabled-border-color);
+    }
+    .page-item-active>.page-link{
+        background-color: var(--cui-pagination-active-bg);
+        border-color: var(--cui-pagination-active-border-color);
+        color: var(--cui-pagination-active-color);
+        z-index: 3;
+    }
+    
+    .page-jump-prev button, .page-jump-next button{
+        display: block;
+        padding: 6px 18px;
+        &:after{
+            content: "...";
+        }
+    }
+}
