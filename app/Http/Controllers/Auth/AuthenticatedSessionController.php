@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
+use \Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -28,7 +29,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): \Symfony\Component\HttpFoundation\Response
+    public function store(LoginRequest $request): HttpResponse
     {
         $request->authenticate();
 
@@ -42,7 +43,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request): RedirectResponse | HttpResponse
     {
         Auth::guard('web')->logout();
 
@@ -50,6 +51,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
+        if ($request->ajax()){
+            return Inertia::location(route('login'));
+        }
         return redirect('/');
     }
 }
