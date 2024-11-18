@@ -2,7 +2,7 @@ import useGlobalConstantsContext from "@/Contexts/GlobalConstants";
 import Util from "@/lib/util";
 import { AxiosFormError } from "@/types/app";
 import { User } from "@/types/index"
-import { CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CButton, CFormInput, CCol, CRow, CFormSwitch, CAlert } from "@coreui/react"
+import { CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CButton, CFormInput, CCol, CRow, CFormSwitch, CAlert, CForm } from "@coreui/react"
 import axios from "axios";
 import { ChangeEvent, ReactNode, useEffect, useState } from "react"
 import { getDefaultUser } from "./List";
@@ -33,7 +33,7 @@ export default function EditModal({
     const updateUserInfo = async () => {
         setErrors({});
         try {
-            const isNew:boolean = _user.id == 0;
+            const isNew: boolean = _user.id == 0;
             const resp = await axios.request({
                 method: isNew ? 'post' : 'put',
                 url: isNew ? route('users.store') : route('users.update', user.id),

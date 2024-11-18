@@ -8,6 +8,7 @@ import {
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
+  CNavLink,
 } from '@coreui/react'
 import {
   cilBell,
@@ -24,10 +25,16 @@ import {
 import CIcon from '@coreui/icons-react'
 import avatar8 from './../../assets/images/avatars/8.jpg'
 import { useForm } from '@inertiajs/react';
+import { Link } from 'react-router-dom'
+import NavLink from '@/Components/NavLink'
+import useGlobalConstantsContext from '@/Contexts/GlobalConstants'
 
 const AppHeaderDropdown = () => {
 
   const { post } = useForm({});
+
+  const { globalConstants } = useGlobalConstantsContext()
+  const { ADMIN_PATH } = globalConstants;
 
   return (
     <CDropdown variant="nav-item">
@@ -65,9 +72,10 @@ const AppHeaderDropdown = () => {
           </CBadge>
         </CDropdownItem>
         <CDropdownHeader className="bg-body-secondary fw-semibold my-2">Settings</CDropdownHeader>
-        <CDropdownItem href="#">
-          <CIcon icon={cilUser} className="me-2" />
-          Profile
+        <CDropdownItem as="button">
+          <Link to={`${ADMIN_PATH}/profile`} className='in-link'>
+            <CIcon icon={cilUser} className="me-2" />アカウント情報
+          </Link>
         </CDropdownItem>
         <CDropdownItem href="#">
           <CIcon icon={cilSettings} className="me-2" />
@@ -89,11 +97,11 @@ const AppHeaderDropdown = () => {
         </CDropdownItem>
         <CDropdownDivider />
         <CDropdownItem href="#">
-        <CIcon icon={cilLockLocked} className="me-2" />
+          <CIcon icon={cilLockLocked} className="me-2" />
           Lock Account
         </CDropdownItem>
-        <CDropdownItem onClick={()=>{ post(route('logout'))}} as="button">
-        <CIcon icon={cilExitToApp} className="me-2" />
+        <CDropdownItem onClick={() => { post(route('logout')) }} as="button">
+          <CIcon icon={cilExitToApp} className="me-2" />
           ログアウト
         </CDropdownItem>
       </CDropdownMenu>

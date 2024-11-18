@@ -8,6 +8,14 @@ use Illuminate\Validation\Rule;
 
 class ProfileUpdateRequest extends FormRequest
 {
+
+    
+    public function authorize(): bool 
+    {
+        return (boolean) $this->user();
+    }
+
+
     /**
      * Get the validation rules that apply to the request.
      *

@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Models\User;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -20,14 +21,9 @@ Route::prefix($admin_path)->get('/{operation?}/{target?}/{property?}', function 
     return Inertia::render('Default', [
         'ADMIN_PATH' => $admin_path,
         'config' => config('broadtools'),
+        'mustVerifyEmail' => in_array(MustVerifyEmail::class, class_implements(User::class)),
         'roles' => Role::all(),
     ]);
 })->middleware(['auth', 'verified'])->name('coreuiadmin');
-
-Route::middleware('auth')->prefix('/admin')->name('admin.')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
 require __DIR__ . '/auth.php';

@@ -4,6 +4,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
+import axios from 'axios';
 import { FormEventHandler } from 'react';
 
 export default function UpdateProfileInformation({
@@ -23,10 +24,10 @@ export default function UpdateProfileInformation({
             email: user.email,
         });
 
-    const submit: FormEventHandler = (e) => {
+    const submit: FormEventHandler = async (e) => {
         e.preventDefault();
-
-        patch(route('profile.update'));
+        const resp = await axios.patch(route('profile.update'), data);
+        // patch(route('profile.update'));
     };
 
     return (
@@ -77,14 +78,15 @@ export default function UpdateProfileInformation({
                 {mustVerifyEmail && user.email_verified_at === null && (
                     <div>
                         <p className="mt-2 text-sm text-gray-800">
-                            Your email address is unverified.
+                            メールアドレスの実在チェックが未完了です。
                             <Link
-                                href={route('verification.send')}
-                                method="post"
+                                href={route('verification.notice')}
+                                method="get"
                                 as="button"
+                                target="_blank"
                                 className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
-                                Click here to re-send the verification email.
+                                ここをクリックして確認メールを送信してください。
                             </Link>
                         </p>
 

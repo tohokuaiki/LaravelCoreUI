@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laravel\Sanctum\Contracts\HasApiTokens;
 
 class ProfileController extends Controller
 {
@@ -27,7 +30,7 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request): RedirectResponse | JsonResponse
     {
         $request->user()->fill($request->validated());
 
@@ -35,7 +38,11 @@ class ProfileController extends Controller
             $request->user()->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $r = $request->user()->save();
+
+        if ($request->ajax()){
+            return response()->json(['user' => $request->user]);
+        }
 
         return Redirect::route('profile.edit');
     }
@@ -43,7 +50,7 @@ class ProfileController extends Controller
     /**
      * Delete the user's account.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request): RedirectResponse | \Illuminate\Http\Response
     {
         $request->validate([
             'password' => ['required', 'current_password'],
@@ -51,12 +58,21 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        Auth::logout();
+        Auth::guard('web')->logout();
+        $sanctum_user = Auth::guard('sanctum')->user();
+        if (in_array(HasApiTokens::class, class_uses($sanctum_user))){
+            $sanctum_user->tokens()->delete();
+        }
+        // Auth::logout();
 
         $user->delete();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        if ($request->ajax()){
+            return Inertia::location('/');
+        }
 
         return Redirect::to('/');
     }
