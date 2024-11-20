@@ -1,4 +1,4 @@
-import Util from '@/lib/util';
+import Util, { getDefaultUser } from '@/lib/util';
 import { User } from '@/types/index';
 import { CCard, CCardHeader, CCardBody, CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow, CButton, CBadge } from '@coreui/react';
 import { Head } from '@inertiajs/react';
@@ -11,14 +11,6 @@ import DeleteModal from './DeleteModal';
 import axios from 'axios';
 import { cilPencil } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
-
-export const getDefaultUser = (): User => {
-    return {
-        id: 0, name: "", email: "", password: "",
-        roles: [],
-        email_verified_at: "0000-00-00 00:00:00", created_at: "0000-00-00 00:00:00", updated_at: "0000-00-00 00:00:00"
-    };
-}
 
 export default function List(): ReactNode {
 

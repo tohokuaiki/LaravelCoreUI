@@ -17,7 +17,9 @@ export default function BaseLoading(props: {
     const overlay: any = (base: any) => {
         return ({
             ...base,
-            background: 'rgba(10, 10, 10, 0.2)'
+            background: 'rgb(230 230 230 / 50%)',
+            position: 'fixed',
+            zIndex: '99999'
         });
     }
 

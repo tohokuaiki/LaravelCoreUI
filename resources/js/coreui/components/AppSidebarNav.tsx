@@ -9,11 +9,13 @@ import { CBadge, CNavLink, CSidebarNav } from '@coreui/react'
 import { CIconType, CINavigation } from '@/Components/AdminNav'
 import { usePage } from '@inertiajs/react'
 import Util from '@/lib/util'
+import useGlobalConstantsContext from '@/Contexts/GlobalConstants'
 
 export const AppSidebarNav = ({ items }:
   { items: CINavigation[]; }) => {
 
-  const user = usePage().props.auth.user;
+  const { globalConstants } = useGlobalConstantsContext();
+  const user = globalConstants.user;
 
   const navLink = (
     name: string,

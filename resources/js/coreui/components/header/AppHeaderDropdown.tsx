@@ -23,23 +23,24 @@ import {
   cilExitToApp,
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
-import avatar8 from './../../assets/images/avatars/8.jpg'
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { Link } from 'react-router-dom'
 import NavLink from '@/Components/NavLink'
 import useGlobalConstantsContext from '@/Contexts/GlobalConstants'
 
 const AppHeaderDropdown = () => {
 
+  const { globalConstants } = useGlobalConstantsContext();
+  const { user, ADMIN_PATH } = globalConstants;
+  
   const { post } = useForm({});
-
-  const { globalConstants } = useGlobalConstantsContext()
-  const { ADMIN_PATH } = globalConstants;
 
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle className="py-0 pe-0" caret={false}>
-        <CAvatar src={avatar8} size="md" />
+        {user.profile_image_url ? 
+        <CAvatar src={user.profile_image_url} size="md" /> :
+        <CIcon icon={cilUser} customClassName="nav-icon avatar-default"/>}
       </CDropdownToggle>
       <CDropdownMenu className="pt-0">
         <CDropdownHeader className="bg-body-secondary fw-semibold mb-2">Account</CDropdownHeader>

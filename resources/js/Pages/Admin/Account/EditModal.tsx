@@ -5,7 +5,7 @@ import { User } from "@/types/index"
 import { CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CButton, CFormInput, CCol, CRow, CFormSwitch, CAlert, CForm } from "@coreui/react"
 import axios from "axios";
 import { ChangeEvent, ReactNode, useEffect, useState } from "react"
-import { getDefaultUser } from "./List";
+import { getDefaultUser } from "@/lib/util";
 import { ErrorMessage } from "@/Components/InputError";
 
 export default function EditModal({

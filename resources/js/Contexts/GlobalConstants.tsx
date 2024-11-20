@@ -1,10 +1,14 @@
+import { getDefaultUser } from '@/lib/util';
+import { User } from '@/types';
 import { Config, Role } from '@/types/app';
 import { Dispatch, createContext, ReactNode, SetStateAction, useState, useContext } from 'react';
 
 export type GlobalConstantsType = {
+    user: User;
     ADMIN_PATH: string;
     config: Config;
     roles: Role[];
+    mustVerifyEmail: boolean;
 }
 
 export type GlobalConstantsTypeSet = {
@@ -12,13 +16,20 @@ export type GlobalConstantsTypeSet = {
     setGlobalConstatns: Dispatch<SetStateAction<GlobalConstantsType>>;
 }
 const globalConstants = {
+    user: getDefaultUser(),
     ADMIN_PATH: "",
     config: {
         pagination: {
             perpage: 0
+        },
+        upload_file_limit: {
+            max_file_size: 0,
+            image: { mimes: [], extensions: [] },
+            file: { mimes: [], extensions: [] }
         }
     },
     roles: [],
+    mustVerifyEmail: false,
 }
 
 const GlobalConstantsContext = createContext<GlobalConstantsTypeSet>({ globalConstants, setGlobalConstatns: () => { } })

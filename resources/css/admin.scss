@@ -24,3 +24,25 @@ a {
 .was-validated :invalid ~ .invalid-feedback, .was-validated :invalid ~ .invalid-tooltip, .is-invalid ~ .invalid-feedback, .is-invalid ~ .invalid-tooltip{
     margin-bottom: 1em;
 }
+button.dropdown-item a.in-link{
+    color: var(--cui-dropdown-link-color);
+    text-decoration: none;
+}
+.header-nav {
+    .nav-item{
+        .avatar{
+            &.avatar-md{
+                overflow: hidden;
+            }
+        }
+        .nav-icon{
+            &.avatar-default{
+                width: 2rem;
+                height: 2rem;
+            }
+        }
+    }
+}
+ul.error-message li{
+    color: var(--cui-form-invalid-color);
+}

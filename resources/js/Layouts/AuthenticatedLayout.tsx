@@ -11,17 +11,20 @@ import { AppContent, AppSidebar, AppFooter, AppHeader } from '../../js/coreui/co
 import store from '../coreui/store'
 import { useCookies } from 'react-cookie';
 import axios from "axios";
+import useGlobalConstantsContext from '@/Contexts/GlobalConstants';
 
 export default function Authenticated({
     header,
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
 
-    const user = usePage().props.auth.user;
+    const { globalConstants } = useGlobalConstantsContext();
+    const user = globalConstants.user;
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
+    /// I can't merge this interceptor to Default.tsx...oops
     const [cookies, setCookie, removeCookie] = useCookies(['XSRF-TOKEN']);    
     axios.interceptors.request.use(config => {
         config.headers!['X-XSRF-TOKEN'] = cookies['XSRF-TOKEN']

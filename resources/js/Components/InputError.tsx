@@ -16,5 +16,5 @@ export default function InputError({
 }
 
 export const ErrorMessage = ({errors }: { errors: string[]; }):ReactNode => {
-    return errors ? <ul>{errors.map((e, i) => <li key={i}>{e}</li>)}</ul> : ""
+    return errors ? <ul className="error-message">{errors.map((e, i) => <li key={i}>{e}</li>)}</ul> : ""
 }

@@ -14,10 +14,10 @@ export default function Profile(): ReactNode {
 
     return (
         <>
-            <Head title="アカウント情報" />
+            <Head title="アカウント情報の変更" />
             <CCard className="mb-4">
                 <CCardHeader>
-                    アカウント情報
+                    アカウント情報の変更
                 </CCardHeader>
                 <CCardBody>
 

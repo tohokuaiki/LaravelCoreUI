@@ -32,16 +32,17 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse | JsonResponse
     {
-        $request->user()->fill($request->validated());
-
+        $data = $request->validated();
+        $user = $request->user();
+        $user->fill($data);
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
 
-        $r = $request->user()->save();
-
+        $user->save();
+        $user->uploadMedia($request, 'profile_image');
         if ($request->ajax()){
-            return response()->json(['user' => $request->user]);
+            return response()->json(['user' => $user]);
         }
 
         return Redirect::route('profile.edit');
@@ -56,12 +57,12 @@ class ProfileController extends Controller
             'password' => ['required', 'current_password'],
         ]);
 
-        $user = $request->user();
+        $user = $request->user();   
 
         Auth::guard('web')->logout();
         $sanctum_user = Auth::guard('sanctum')->user();
         if (in_array(HasApiTokens::class, class_uses($sanctum_user))){
-            $sanctum_user->tokens()->delete();
+            call_user_func([$sanctum_user, 'tokens'])->delete();
         }
         // Auth::logout();
 

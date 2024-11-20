@@ -3,18 +3,35 @@ export type DateTimeString = `${string}-${string}-${string} ${string}:${string}:
 
 export type Role = {
     id: number;
-    name : string;
+    name: string;
     guard_name: string;
     created_at: DateTimeString;
     updated_at: DateTimeString;
 }
 
+type FileRestricts = {
+    extensions: string[];
+    mimes: string[];
+};
+
 export type Config = {
     pagination: {
         perpage: number;
     };
+    upload_file_limit: {
+        max_file_size: number;
+        image: FileRestricts;
+        file: FileRestricts;
+    }
 }
 
 export type AxiosFormError = {
     [key: string]: string[];
 }
+
+export type GeneralValidateResult<K extends string> = {
+    success: boolean;
+    message: Record<K, string[]>;
+}
+
+export type FileValidateResult = GeneralValidateResult<"ext" | "mime" | "size">;

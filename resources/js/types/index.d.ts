@@ -6,6 +6,7 @@ export type User = {
     email: string;
     email_verified_at?: DateTimeString;
     password?: string | undefined;
+    profile_image_url?: string ;
     created_at: DateTimeString;
     updated_at: DateTimeString;
     roles: Role[];

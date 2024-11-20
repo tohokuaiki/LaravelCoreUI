@@ -1,11 +1,16 @@
-import InputError from '@/Components/InputError';
+import InputError, { ErrorMessage } from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
+import useGlobalConstantsContext from '@/Contexts/GlobalConstants';
+import useImagePreview from '@/hooks/useImagePreview';
+import { CAlert, CFormInput } from '@coreui/react';
 import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import axios from 'axios';
-import { FormEventHandler } from 'react';
+import { ChangeEvent, FormEventHandler, useRef, useState } from 'react';
+import { AxiosFormError, FileValidateResult } from '@/types/app';
+import { User } from '@/types';
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -16,7 +21,9 @@ export default function UpdateProfileInformation({
     status?: string;
     className?: string;
 }) {
-    const user = usePage().props.auth.user;
+
+    const { globalConstants, setGlobalConstatns } = useGlobalConstantsContext();
+    const { user, config } = globalConstants;
 
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
@@ -24,11 +31,49 @@ export default function UpdateProfileInformation({
             email: user.email,
         });
 
+    // server-side error
+    const [ajaxErrors, setAjaxErrors] = useState<AxiosFormError>({});
+
+    const profileImage = useRef<HTMLInputElement | null>(null);
+    const [profileError, setProfileError] = useState<string[]>([])
+    const { imagePreview, readImagePreview } = useImagePreview(config);
+    const [uploadFile, setUploadFile] = useState<File | null>(null);
+
     const submit: FormEventHandler = async (e) => {
         e.preventDefault();
-        const resp = await axios.patch(route('profile.update'), data);
-        // patch(route('profile.update'));
+        setAjaxErrors({});
+        const formData = new FormData();
+        formData.append('_method', 'patch');
+        if (uploadFile) formData.append('profile_image', uploadFile);
+        Object.entries(data).forEach(entryset => formData.append(entryset[0], entryset[1]));
+        try {
+            const resp = await axios.post(route('profile.update'), formData);
+            const _user = resp.data.user as User;
+            setGlobalConstatns({...globalConstants, user:_user});
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                if (e.response!.data.errors) {
+                    setAjaxErrors(e.response!.data.errors);
+                } else if (e.response!.data.message) {
+                    setAjaxErrors({ message: [e.response!.data.message] });
+                }
+            }
+        }
+
+        if (profileImage.current) profileImage.current.value = "";
     };
+
+    const onChangeProfileImage = ({ target: { files } }: ChangeEvent<HTMLInputElement>) => {
+        setProfileError([]);
+        try {
+            readImagePreview(files);
+            if (files) setUploadFile(files[0]);
+        } catch (result) {
+            const errors: string[] = [];
+            Object.values((result as FileValidateResult).message).forEach((m) => errors.push(...m))
+            setProfileError(errors)
+        }
+    }
 
     return (
         <section className={className}>
@@ -36,12 +81,13 @@ export default function UpdateProfileInformation({
                 <h2 className="text-lg font-medium text-gray-900">
                     Profile Information
                 </h2>
-
-                <p className="mt-1 text-sm text-gray-600">
-                    Update your account's profile information and email address.
-                </p>
             </header>
 
+            <CAlert color="danger" hidden={Object.keys(ajaxErrors).length === 0}>
+                {Object.entries(ajaxErrors).map(([key, value]) =>
+                    <ErrorMessage errors={value} key={key} />
+                )}
+            </CAlert>
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div>
                     <InputLabel htmlFor="name" value="Name" />
@@ -55,8 +101,7 @@ export default function UpdateProfileInformation({
                         isFocused
                         autoComplete="name"
                     />
-
-                    <InputError className="mt-2" message={errors.name} />
+                    <ErrorMessage errors={ajaxErrors.name} />
                 </div>
 
                 <div>
@@ -71,8 +116,7 @@ export default function UpdateProfileInformation({
                         required
                         autoComplete="username"
                     />
-
-                    <InputError className="mt-2" message={errors.email} />
+                    <ErrorMessage errors={ajaxErrors.email} />
                 </div>
 
                 {mustVerifyEmail && user.email_verified_at === null && (
@@ -98,6 +142,21 @@ export default function UpdateProfileInformation({
                         )}
                     </div>
                 )}
+
+                <div>
+                    <InputLabel htmlFor="profileImage" value="プロフィール画像(JPEG/PNG/GIF)" />
+                    {imagePreview || user.profile_image_url ?
+                        <div className="card w-1/2 p-2 mb-2">
+                            <img className="card-img-top" src={imagePreview ? URL.createObjectURL(imagePreview) : user.profile_image_url} alt="プロフィール画像" />
+                        </div>
+                        : ""}
+                    <CFormInput type="file" id="profileImage" accept="image/*" onChange={onChangeProfileImage} ref={profileImage}
+                        className="p-2 border-1 border-b-gray-300 focus:ring-2 focus:outline-none focus:ring-indigo-500 focus:ring-offset-2" />
+                    {profileError.map((error, i) =>
+                        <InputError className="mt-2" message={error} key={i} />
+                    )}
+                    <ErrorMessage errors={ajaxErrors.profile_image} />
+                </div>
 
                 <div className="flex items-center gap-4">
                     <PrimaryButton disabled={processing}>Save</PrimaryButton>
