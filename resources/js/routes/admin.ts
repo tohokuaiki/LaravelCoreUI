@@ -2,6 +2,7 @@ import React, { LazyExoticComponent, ReactNode } from 'react'
 
 const Home = React.lazy(()=> import ('@/Pages/Admin/Home'))
 const AdminAccountList = React.lazy(()=> import ('@/Pages/Admin/Account/List'))
+const Profile = React.lazy(()=> import ('@/Pages/Admin/Profile'))
 const Dashboard = React.lazy(() => import('@/coreui/views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('@/coreui/views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('@/coreui/views/theme/typography/Typography'))
@@ -63,6 +64,7 @@ export type RouteProp = {
 const routes:RouteProp[] = [
   { path: '/', name: 'Top', element: Home },
   { path: '/admin/account', name: '管理者アカウント', element: AdminAccountList },
+  { path: '/profile', name: 'アカウント情報', element: Profile },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
