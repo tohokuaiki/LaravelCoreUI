@@ -39,7 +39,7 @@ const AppHeaderDropdown = () => {
     <CDropdown variant="nav-item">
       <CDropdownToggle className="py-0 pe-0" caret={false}>
         {user.profile_image_url ? 
-        <CAvatar src={user.profile_image_url} size="md" /> :
+        <CAvatar src={user.profile_image_url} size="md" key={user.profile_image_url}/> :
         <CIcon icon={cilUser} customClassName="nav-icon avatar-default"/>}
       </CDropdownToggle>
       <CDropdownMenu className="pt-0">

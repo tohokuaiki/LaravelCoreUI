@@ -11,6 +11,8 @@ import axios from 'axios';
 import { ChangeEvent, FormEventHandler, useRef, useState } from 'react';
 import { AxiosFormError, FileValidateResult } from '@/types/app';
 import { User } from '@/types';
+import { ToastResult } from '@/Components/ToastResult';
+import { useToastResultContext } from '@/Contexts/ToastResultsContext';
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -24,12 +26,12 @@ export default function UpdateProfileInformation({
 
     const { globalConstants, setGlobalConstatns } = useGlobalConstantsContext();
     const { user, config } = globalConstants;
-
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
             name: user.name,
             email: user.email,
         });
+    const { setToast } = useToastResultContext();
 
     // server-side error
     const [ajaxErrors, setAjaxErrors] = useState<AxiosFormError>({});
@@ -49,7 +51,8 @@ export default function UpdateProfileInformation({
         try {
             const resp = await axios.post(route('profile.update'), formData);
             const _user = resp.data.user as User;
-            setGlobalConstatns({...globalConstants, user:_user});
+            setGlobalConstatns({ ...globalConstants, user: _user });
+            setToast(ToastResult("ユーザー情報を登録しました。"));
         } catch (e) {
             if (axios.isAxiosError(e)) {
                 if (e.response!.data.errors) {
@@ -82,7 +85,6 @@ export default function UpdateProfileInformation({
                     Profile Information
                 </h2>
             </header>
-
             <CAlert color="danger" hidden={Object.keys(ajaxErrors).length === 0}>
                 {Object.entries(ajaxErrors).map(([key, value]) =>
                     <ErrorMessage errors={value} key={key} />

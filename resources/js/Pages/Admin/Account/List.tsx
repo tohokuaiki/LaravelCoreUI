@@ -122,7 +122,7 @@ export default function List(): ReactNode {
                         </CTableHead>
                         <CTableBody>
                             {selectedUsers.map((user, index) => (
-                                <CTableRow key={index}>
+                                <CTableRow key={user.id}>
                                     <CTableHeaderCell scope="row">{user.id}</CTableHeaderCell>
                                     <CTableDataCell>{user.name}</CTableDataCell>
                                     <CTableDataCell><ul>{user.roles.map((role, index) =>

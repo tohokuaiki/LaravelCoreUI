@@ -3,35 +3,35 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
-import React, { PropsWithChildren, ReactNode, Suspense, useState } from 'react';
-import { CSpinner } from '@coreui/react';
+import React, { PropsWithChildren, ReactElement, ReactNode, Suspense, useState } from 'react';
+import { CSpinner, CToaster } from '@coreui/react';
 import { Provider } from 'react-redux'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AppContent, AppSidebar, AppFooter, AppHeader } from '../../js/coreui/components/index'
 import store from '../coreui/store'
 import { useCookies } from 'react-cookie';
 import axios from "axios";
-import useGlobalConstantsContext from '@/Contexts/GlobalConstants';
+import { useToastResultContext } from '@/Contexts/ToastResultsContext';
 
 export default function Authenticated({
     header,
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
 
-    const { globalConstants } = useGlobalConstantsContext();
-    const user = globalConstants.user;
+    const { toast } = useToastResultContext();
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
     /// I can't merge this interceptor to Default.tsx...oops
-    const [cookies, setCookie, removeCookie] = useCookies(['XSRF-TOKEN']);    
+    const [cookies, setCookie, removeCookie] = useCookies(['XSRF-TOKEN']);
     axios.interceptors.request.use(config => {
         config.headers!['X-XSRF-TOKEN'] = cookies['XSRF-TOKEN']
         return config;
     }, error => {
         return Promise.reject(error)
     })
+
 
     return (
         <>
@@ -47,6 +47,7 @@ export default function Authenticated({
                         <AppSidebar />
                         <div className="wrapper d-flex flex-column min-vh-100">
                             <AppHeader />
+                            {toast ? <CToaster placement="top-end" push={toast} /> : ""}
                             <div className="body flex-grow-1">
                                 {header && (
                                     <header className="bg-white shadow">

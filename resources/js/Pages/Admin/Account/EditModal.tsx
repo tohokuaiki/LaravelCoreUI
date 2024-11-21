@@ -7,6 +7,8 @@ import axios from "axios";
 import { ChangeEvent, ReactNode, useEffect, useState } from "react"
 import { getDefaultUser } from "@/lib/util";
 import { ErrorMessage } from "@/Components/InputError";
+import { useToastResultContext } from "@/Contexts/ToastResultsContext";
+import { ToastResult } from "@/Components/ToastResult";
 
 export default function EditModal({
     user, isVisible, closeHandler, updateHandler
@@ -19,7 +21,7 @@ export default function EditModal({
     }): ReactNode {
 
     const { globalConstants } = useGlobalConstantsContext()
-
+    const { setToast } = useToastResultContext();
     const { roles } = globalConstants
 
     const [_user, _setUser] = useState<User>(getDefaultUser())
@@ -40,6 +42,7 @@ export default function EditModal({
                 data: _user
             });
             updateHandler(resp.data as User, isNew)
+            setToast(ToastResult(resp.data.name + "のアカウント情報を保存しました。"));
         } catch (e) {
             if (axios.isAxiosError(e)) {
                 if (e.response!.data.errors) {

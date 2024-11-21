@@ -5,6 +5,8 @@ import { User } from "@/types/index"
 import { CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CButton, CCol, CRow, CBadge, CAlert } from "@coreui/react"
 import axios from "axios";
 import { ReactNode, useState } from "react"
+import { useToastResultContext } from "@/Contexts/ToastResultsContext";
+import { ToastResult } from "@/Components/ToastResult";
 
 export default function DeleteModal({
     user, isVisible, closeHandler, deleteHandler
@@ -16,6 +18,7 @@ export default function DeleteModal({
         deleteHandler: (user: User) => void;
     }): ReactNode {
 
+    const { setToast } = useToastResultContext();
     const [errors, setErrors] = useState<AxiosFormError>({});
 
     const deleteDo = async () => {
@@ -23,8 +26,8 @@ export default function DeleteModal({
         try {
             const resp = await axios.delete(route('users.destroy', user.id))
             deleteHandler(user)
+            setToast(ToastResult(user.name + "のアカウントを削除しました。"));            
         } catch (e) {
-            console.log(e);
             if (axios.isAxiosError(e)) {
                 if (e.response!.data.errors) {
                     setErrors(e.response!.data.errors);
@@ -52,7 +55,7 @@ export default function DeleteModal({
             <CModalBody>
                 <CAlert color="danger" hidden={Object.keys(errors).length === 0}>
                     {Object.entries(errors).map(([key, value]) =>
-                        <ErrorMessage errors={value} key={key}/>
+                        <ErrorMessage errors={value} key={key} />
                     )}
                 </CAlert>
                 <p>このアカウントを削除してよろしいですか？</p>

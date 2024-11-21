@@ -5,6 +5,7 @@ import BaseLoading from '@/Components/Baseloading';
 import { useEffect, useState } from 'react';
 import { CookiesProvider } from 'react-cookie';
 import axios from 'axios';
+import { ToastResultProvider } from '@/Contexts/ToastResultsContext';
 
 const Default = ({
     ADMIN_PATH,
@@ -67,7 +68,9 @@ const Default = ({
                 <BaseLoading active={loading} wrapper={wrapperStyle} fadeSpeed={100}>
                     <>
                         <Head title="CoreUI Adminstration Panel" />
-                        <AuthenticatedLayout />
+                        <ToastResultProvider defaultValue={null}>
+                            <AuthenticatedLayout />
+                        </ToastResultProvider>
                     </>
                 </BaseLoading>
             </CookiesProvider>

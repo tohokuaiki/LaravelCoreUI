@@ -2,6 +2,8 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
+import { ToastResult } from '@/Components/ToastResult';
+import { useToastResultContext } from '@/Contexts/ToastResultsContext';
 import { Transition } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
 import { FormEventHandler, useRef } from 'react';
@@ -13,6 +15,7 @@ export default function UpdatePasswordForm({
 }) {
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
+    const { setToast } = useToastResultContext();
 
     const {
         data,
@@ -33,7 +36,10 @@ export default function UpdatePasswordForm({
 
         put(route('password.update'), {
             preserveScroll: true,
-            onSuccess: () => reset(),
+            onSuccess: () => {
+                reset();
+                setToast(ToastResult("パスワードを変更しました。"));
+            },
             onError: (errors) => {
                 if (errors.password) {
                     reset('password', 'password_confirmation');

@@ -11,7 +11,7 @@ export type GlobalConstantsType = {
     mustVerifyEmail: boolean;
 }
 
-export type GlobalConstantsTypeSet = {
+type GlobalConstantsTypeSet = {
     globalConstants: GlobalConstantsType;
     setGlobalConstatns: Dispatch<SetStateAction<GlobalConstantsType>>;
 }
