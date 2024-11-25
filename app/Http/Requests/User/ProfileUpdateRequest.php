@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\User;
 
+use App\Http\Requests\UserRequest;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Log;
@@ -24,6 +25,14 @@ class ProfileUpdateRequest extends UserRequest
      */
     public function rules($id = null): array
     {
-        return parent::rules($this->user()->id);
+        $rules = parent::rules(); 
+        $upload_file_limit = config('broadtools.upload_file_limit');
+        $rules['profile_image'] = [
+            'file',
+            'mimetypes:' . implode(',', $upload_file_limit['image']['mimes']),
+            'extensions:' . implode(',', $upload_file_limit['image']['extensions']),
+        ];
+
+        return $rules;
     }
 }

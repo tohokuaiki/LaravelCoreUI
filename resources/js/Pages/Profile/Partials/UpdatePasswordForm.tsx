@@ -4,9 +4,13 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { ToastResult } from '@/Components/ToastResult';
 import { useToastResultContext } from '@/Contexts/ToastResultsContext';
+import { cilWarning } from '@coreui/icons';
+import CIcon from '@coreui/icons-react';
+import { CAlert, CButton, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle } from '@coreui/react';
 import { Transition } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
-import { FormEventHandler, useRef } from 'react';
+import axios from 'axios';
+import { FormEventHandler, useRef, useState } from 'react';
 
 export default function UpdatePasswordForm({
     className = '',
@@ -21,6 +25,7 @@ export default function UpdatePasswordForm({
         data,
         setData,
         errors,
+        setError,
         put,
         reset,
         processing,
@@ -31,28 +36,34 @@ export default function UpdatePasswordForm({
         password_confirmation: '',
     });
 
-    const updatePassword: FormEventHandler = (e) => {
+    const updatePassword: FormEventHandler = async (e) => {
         e.preventDefault();
-
-        put(route('password.update'), {
-            preserveScroll: true,
-            onSuccess: () => {
-                reset();
-                setToast(ToastResult("パスワードを変更しました。"));
-            },
-            onError: (errors) => {
+        try {
+            const resp = await axios.put(route('password.update'), data);
+            reset();
+            setUpdateModal(true);
+        } catch (e) {
+            if (axios.isAxiosError(e)) {
+                setError(e.response?.data.errors);
                 if (errors.password) {
                     reset('password', 'password_confirmation');
                     passwordInput.current?.focus();
                 }
-
                 if (errors.current_password) {
                     reset('current_password');
                     currentPasswordInput.current?.focus();
                 }
-            },
-        });
+            }
+        }
     };
+
+    const [updateModal, setUpdateModal] = useState<boolean>(false);
+    const requireLogin = () => {
+        if (updateModal) {
+            setUpdateModal(false);
+        }
+        window.location.assign(route('login'));
+    }
 
     return (
         <section className={className}>
@@ -61,10 +72,10 @@ export default function UpdatePasswordForm({
                     Update Password
                 </h2>
 
-                <p className="mt-1 text-sm text-gray-600">
-                    Ensure your account is using a long, random password to stay
-                    secure.
-                </p>
+                <CAlert color="warning" className="d-flex align-items-center small p-2 mt-1">
+                    <CIcon icon={cilWarning} className="flex-shrink-0 me-2" width={24} height={24} />
+                    <div>パスワードを変更後は再ログインが必要です。</div>
+                </CAlert>
             </header>
 
             <form onSubmit={updatePassword} className="mt-6 space-y-6">
@@ -147,6 +158,22 @@ export default function UpdatePasswordForm({
                     </Transition>
                 </div>
             </form>
+
+            <CModal
+                visible={updateModal}
+                onClose={() => { requireLogin() }}
+                aria-labelledby="Modal-PasswordUpdated"
+            >
+                <CModalHeader>
+                    <CModalTitle id="Modal-PasswordUpdated">パスワードを変更しました。</CModalTitle>
+                </CModalHeader>
+                <CModalBody>
+                    <p>再度ログインが必要です。新しいパスワードでログインしてください。</p>
+                </CModalBody>
+                <CModalFooter>
+                    <CButton color="primary" onClick={() => { requireLogin() }}>ログイン画面へ移動</CButton>
+                </CModalFooter>
+            </CModal>
         </section>
     );
 }

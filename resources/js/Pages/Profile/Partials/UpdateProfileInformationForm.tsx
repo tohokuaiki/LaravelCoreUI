@@ -52,6 +52,7 @@ export default function UpdateProfileInformation({
             const resp = await axios.post(route('profile.update'), formData);
             const _user = resp.data.user as User;
             setGlobalConstatns({ ...globalConstants, user: _user });
+            setData(_user);
             setToast(ToastResult("ユーザー情報を登録しました。"));
         } catch (e) {
             if (axios.isAxiosError(e)) {

@@ -11,6 +11,7 @@ Route::get('/user', function (Request $request) {
 
 $admin_path = config('app.admin_path');
 Route::middleware('auth:sanctum')->prefix($admin_path)->group(function () use ($admin_path) {
+// Route::prefix($admin_path)->group(function () use ($admin_path) {
     Route::apiResource('/users', UserController::class);
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

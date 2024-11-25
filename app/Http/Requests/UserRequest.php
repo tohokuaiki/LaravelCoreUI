@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Elegant\Sanitizer\Laravel\SanitizesInput;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rules\Password;
 
 class UserRequest extends FormRequest
 {
@@ -15,7 +16,8 @@ class UserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->hasPermissionTo('admin account');
+        $user = $this->user();
+        return $user  && $user->hasPermissionTo('admin account');
     }
 
     /**
@@ -25,37 +27,35 @@ class UserRequest extends FormRequest
      */
     public function rules($id = null): array
     {
-        if (is_null($id)) {
-            $id = $this->route('user');
-        }
-
         $method = strtoupper($this->method());
         $rules = [
             'name' => ['required',],
             'email' => ['required', 'max:255', 'email',],
-            'password' => ['sometimes', 'string', 'min:8'],
+            'password' => ['sometimes', Password::defaults(), 'confirmed'],
             'roles.*.id' => ['required', 'integer'],
         ];
 
-        $upload_file_limit = config('broadtools.upload_file_limit');
+        if (is_null($id)) {
+            $id = $this->route('user');
+            if (!$id){
+                $id = $this->user()->id;
+            }
+        }
 
         switch ($method) {
+            case "GET":
+                $rules = [];
             case "POST":
                 $rules['email'][] =  'unique:users,email';
-                return $rules;
+                break;
             case "PUT":
             case "PATCH":
                 $rules['email'][] =  'unique:users,email,' . $id;
-                $rules['profile_image'] = [
-                    'file',
-                    'mimetypes:' . implode(',', $upload_file_limit['image']['mimes']),
-                    'extensions:' . implode(',', $upload_file_limit['image']['extensions']),
-                ];
-                return $rules;
                 break;
             default:
-                return [];
+                break;
         }
+        return $rules;
     }
 
 

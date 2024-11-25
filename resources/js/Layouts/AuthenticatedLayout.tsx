@@ -23,16 +23,6 @@ export default function Authenticated({
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
-    /// I can't merge this interceptor to Default.tsx...oops
-    const [cookies, setCookie, removeCookie] = useCookies(['XSRF-TOKEN']);
-    axios.interceptors.request.use(config => {
-        config.headers!['X-XSRF-TOKEN'] = cookies['XSRF-TOKEN']
-        return config;
-    }, error => {
-        return Promise.reject(error)
-    })
-
-
     return (
         <>
             <BrowserRouter>

@@ -53,7 +53,6 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, string $id)
     {
-        // $user = User::with('roles')->find($id);
         $user = User::find($id);
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);

@@ -3,7 +3,7 @@ import { GlobalConstantsProvider, GlobalConstantsType } from '@/Contexts/GlobalC
 import { Head, usePage } from '@inertiajs/react';
 import BaseLoading from '@/Components/Baseloading';
 import { useEffect, useState } from 'react';
-import { CookiesProvider } from 'react-cookie';
+import { CookiesProvider, useCookies } from 'react-cookie';
 import axios from 'axios';
 import { ToastResultProvider } from '@/Contexts/ToastResultsContext';
 
@@ -21,10 +21,12 @@ const Default = ({
     }
 
     const [loading, setLoading] = useState<boolean>(true);
+    const [cookies, setCookie, removeCookie] = useCookies(['XSRF-TOKEN']);
 
     useEffect(() => {
         const requestInterceptor = axios.interceptors.request.use(
             (config) => {
+                config.headers!['X-XSRF-TOKEN'] = cookies['XSRF-TOKEN']
                 setLoading(true);
                 return config;
             },
@@ -51,10 +53,12 @@ const Default = ({
         };
     }, []);
 
-    (async () => {
-        await fetch(route('sanctum.csrf-cookie'))
-        setLoading(false)
-    })()
+    useEffect(() => {
+        (async () => {
+            await fetch(route('sanctum.csrf-cookie'))
+            setLoading(false)
+        })();
+    }, []);
 
     const wrapperStyle = {
         width: "100%",

@@ -112,6 +112,18 @@ export default function EditModal({
                     invalid={'password' in errors}
                     feedbackInvalid={<ErrorMessage errors={errors.password} />}
                 />
+
+                <CFormInput
+                    type="password"
+                    label="パスワード(確認)"
+                    defaultValue=""
+                    text="パスワードを再度入力してください。"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                        _setUser({ ..._user, password_confirmation: e.target.value })
+                    }}
+                    invalid={'password_confirmation' in errors}
+                    feedbackInvalid={<ErrorMessage errors={errors.password_confirmation} />}
+                />
                 <CRow className="mb-3 mt-4">
                     <CCol sm={4}>役割</CCol>
                     <CCol sm={8}>
