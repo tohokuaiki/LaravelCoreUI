@@ -6,7 +6,7 @@ export const getDefaultUser = (): User => {
     return {
         id: 0, name: "", email: "", password: "",
         roles: [],
-        email_verified_at: "0000-00-00 00:00:00", created_at: "0000-00-00 00:00:00", updated_at: "0000-00-00 00:00:00"
+        email_verified_at: "0000-00-00 00:00:00", last_login_at: "0000-00-00 00:00:00", created_at: "0000-00-00 00:00:00", updated_at: "0000-00-00 00:00:00"
     };
 }
 

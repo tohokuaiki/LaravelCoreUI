@@ -8,6 +8,7 @@ export type User = {
     password?: string | undefined;
     password_confirmation?: string | undefined;
     profile_image_url?: string ;
+    last_login_at: DateTimeString | null;
     created_at: DateTimeString;
     updated_at: DateTimeString;
     roles: Role[];

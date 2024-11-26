@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\LoginSuccess;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\JsonResponse;
@@ -36,7 +37,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $redirect_url = $request->session()->pull('url.intended', url('/'));
+        $redirect_url = $request->session()->pull('url.intended', route('coreuiadmin'));
+
+        LoginSuccess::dispatch($request->user());
 
         return Inertia::location($redirect_url);
     }

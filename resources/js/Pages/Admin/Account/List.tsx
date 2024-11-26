@@ -86,7 +86,6 @@ export default function List(): ReactNode {
     const closeDeleteModal = () => {
         setDeleteUserModal(false)
     }
-    route()
 
     return (
         <>
@@ -108,13 +107,14 @@ export default function List(): ReactNode {
                         pageSize={perPage}
                         total={users.length}
                     />
-                    <CTable>
+                    <CTable className='text-center'>
                         <CTableHead>
                             <CTableRow>
                                 <CTableHeaderCell scope="col">#</CTableHeaderCell>
                                 <CTableHeaderCell scope="col">アカウント名</CTableHeaderCell>
                                 <CTableHeaderCell scope="col">ロール</CTableHeaderCell>
                                 <CTableHeaderCell scope="col">メールアドレス</CTableHeaderCell>
+                                <CTableHeaderCell scope="col">最終ログイン</CTableHeaderCell>
                                 <CTableHeaderCell scope="col">作成日時</CTableHeaderCell>
                                 <CTableHeaderCell scope="col">更新日時</CTableHeaderCell>
                                 <CTableHeaderCell scope="col">操作</CTableHeaderCell>
@@ -126,11 +126,12 @@ export default function List(): ReactNode {
                                     <CTableHeaderCell scope="row">{user.id}</CTableHeaderCell>
                                     <CTableDataCell>{user.name}</CTableDataCell>
                                     <CTableDataCell><ul>{user.roles.map((role, index) =>
-                                        <CBadge key={index} color="success" shape="rounded-pill">{role.name}</CBadge>
+                                        <CBadge key={index} color="success" shape="rounded-pill" className='me-1'>{role.name}</CBadge>
                                     )}</ul></CTableDataCell>
                                     <CTableDataCell>{user.email}</CTableDataCell>
-                                    <CTableDataCell>{Util.datetime(user.created_at).toFormat('yyyy/MM/dd HH:mm:ss')}</CTableDataCell>
-                                    <CTableDataCell>{Util.datetime(user.updated_at).toFormat('yyyy/MM/dd HH:mm:ss')}</CTableDataCell>
+                                    <CTableDataCell>{user.last_login_at ? Util.datetime(user.last_login_at).toFormat('yyyy/MM/dd HH:mm') : '--'}</CTableDataCell>
+                                    <CTableDataCell>{Util.datetime(user.created_at).toFormat('yyyy/MM/dd HH:mm')}</CTableDataCell>
+                                    <CTableDataCell>{Util.datetime(user.updated_at).toFormat('yyyy/MM/dd HH:mm')}</CTableDataCell>
                                     <CTableDataCell>
                                         <CButton color='primary' className="mr-2" onClick={() => openEditModal(user)}>編集</CButton>
                                         <CButton color='danger' onClick={() => openDeleteModal(user)}>削除</CButton>
