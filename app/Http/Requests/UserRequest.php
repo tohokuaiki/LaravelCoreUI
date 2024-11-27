@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Constants\PermissionConstant;
 use Illuminate\Foundation\Http\FormRequest;
 use Elegant\Sanitizer\Laravel\SanitizesInput;
 use Illuminate\Support\Facades\Log;
@@ -17,7 +18,7 @@ class UserRequest extends FormRequest
     public function authorize(): bool
     {
         $user = $this->user();
-        return $user  && $user->hasPermissionTo('admin account');
+        return $user  && $user->hasPermissionTo(PermissionConstant::Admin);
     }
 
     /**
@@ -37,7 +38,7 @@ class UserRequest extends FormRequest
 
         if (is_null($id)) {
             $id = $this->route('user');
-            if (!$id){
+            if (!$id) {
                 $id = $this->user()->id;
             }
         }
@@ -52,6 +53,8 @@ class UserRequest extends FormRequest
             case "PATCH":
                 $rules['email'][] =  'unique:users,email,' . $id;
                 break;
+            case "DELETE":
+                $rules = [];
             default:
                 break;
         }

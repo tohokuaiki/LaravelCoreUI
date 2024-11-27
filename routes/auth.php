@@ -1,5 +1,6 @@
 <?php
 
+use App\Constants\RoleConstant;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -9,14 +10,18 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    $allow_new_user = config('app.allow_new_user');
-    Route::get('register', [RegisteredUserController::class, $allow_new_user ? 'create' : 'registerInvalid'])
+    $allow_new_user = config('app.allow_new_user') || User::whereHas('roles', function ($query) {
+       $query->where('name', RoleConstant::Admin);
+    })->exists();
+    Route::get('register', [RegisteredUserController::class, !$allow_new_user ? 'create' : 'registerInvalid'])
         ->name('register');
 
-    Route::post('register', [RegisteredUserController::class, $allow_new_user ? 'store' : 'registerInvalid']);
+    Route::post('register', [RegisteredUserController::class, !$allow_new_user ? 'store' : 'registerInvalid']);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');

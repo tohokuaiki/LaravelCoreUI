@@ -26,8 +26,8 @@ class UserController extends Controller
     {
         $data = $request->validated();
         $user = User::create($data);
-        foreach ($data['roles'] as $role){
-            if ($role = Role::find($role['id'])){
+        foreach ($data['roles'] ?? [] as $role) {
+            if ($role = Role::find($role['id'])) {
                 $user->assignRole($role);
             }
         }
@@ -60,7 +60,7 @@ class UserController extends Controller
 
         $data = $request->validated();
         $user->update($data);
-        $user->syncRoles(array_map(fn($role)=> $role['id'], $data['roles'] ?? []))->load('roles');
+        $user->syncRoles(array_map(fn($role) => $role['id'], $data['roles'] ?? []))->load('roles');
 
         return response()->json($user);
     }
@@ -76,8 +76,8 @@ class UserController extends Controller
             return response()->json(['message' => '削除対象のユーザーが見つかりません。既に削除済みのようです。'], 404);
         }
         $operate_user = $request->user();
-        
-        if ($id === $operate_user->id){
+
+        if ($id === $operate_user->id) {
             return response()->json(['message' => '自分自身は削除できません。'], 403);
         }
 

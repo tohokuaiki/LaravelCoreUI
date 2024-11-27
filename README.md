@@ -19,6 +19,9 @@ Laravel administration panel with CoreUI & React.js.
 1. start servers using ``` php artisan serve ``` and ``` npm run dev ```. You can access http://localhost:8000
 1. create admin account and login. You can access administration sample panel at http://localhost:8000/coreuiadmin
 
+### features
+1. If you have at least one account with administrator privileges, user registration will only be possible through the administration screen. If you want to disable this feature, set config('app.allow_new_user') true.
+
 ### Customize
 
 #### ADMIN_PATH

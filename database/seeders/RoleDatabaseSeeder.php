@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Constants\PermissionConstant;
+use App\Constants\RoleConstant;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
@@ -16,12 +18,11 @@ class RoleDatabaseSeeder extends Seeder
     public function run(): void
     {
         // ロール作成
-        $adminRole = Role::create(['name' => 'admin']);
+        $adminRole = Role::create(['name' => RoleConstant::Admin]);
 
         // 権限作成
         $permissions = [
-            ['name' => 'admin account'],
-            ['name' => 'apache basic'],
+            ['name' => PermissionConstant::Admin],
         ];
         foreach ($permissions as $permission) {
             $registerPermission = Permission::create($permission);

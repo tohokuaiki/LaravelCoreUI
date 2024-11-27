@@ -132,7 +132,7 @@ export default function List(): ReactNode {
                                     <CTableDataCell>{user.last_login_at ? Util.datetime(user.last_login_at).toFormat('yyyy/MM/dd HH:mm') : '--'}</CTableDataCell>
                                     <CTableDataCell>{Util.datetime(user.created_at).toFormat('yyyy/MM/dd HH:mm')}</CTableDataCell>
                                     <CTableDataCell>{Util.datetime(user.updated_at).toFormat('yyyy/MM/dd HH:mm')}</CTableDataCell>
-                                    <CTableDataCell>
+                                    <CTableDataCell className="text-nowrap">
                                         <CButton color='primary' className="mr-2" onClick={() => openEditModal(user)}>編集</CButton>
                                         <CButton color='danger' onClick={() => openDeleteModal(user)}>削除</CButton>
                                     </CTableDataCell>
