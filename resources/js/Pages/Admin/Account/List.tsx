@@ -2,15 +2,17 @@ import Util, { getDefaultUser } from '@/lib/util';
 import { User } from '@/types/index';
 import { CCard, CCardHeader, CCardBody, CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow, CButton, CBadge } from '@coreui/react';
 import { Head } from '@inertiajs/react';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import useGlobalConstantsContext from '@/Contexts/GlobalConstants';
-import { useLocation, useNavigate } from 'react-router-dom';
-import MyRcPager from '@/Components/Pager';
+import { useLocation } from 'react-router-dom';
 import EditModal from './EditModal';
 import DeleteModal from './DeleteModal';
 import axios from 'axios';
 import { cilPencil } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
+import { createColumnHelper, flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, Table, useReactTable } from '@tanstack/react-table';
+import {TanStackPagination , tanStackSortableHeader} from '@/Components/TanStackUtils';
+
 
 export default function List(): ReactNode {
 
@@ -18,6 +20,7 @@ export default function List(): ReactNode {
 
     const { globalConstants } = useGlobalConstantsContext()
     const { config } = globalConstants;
+    const bodyRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         (async () => {
@@ -32,25 +35,8 @@ export default function List(): ReactNode {
     const searchParams = new URLSearchParams(location.search)
     const pathname = location.pathname
     const p: number = Number(searchParams.get('page'))
-    const initialPage: number = p ? p : 1
-    const [page, setPage] = useState(initialPage)
+    const initialPage: number = p > 0 ? p - 1 : 0
     const perPage: number = config.pagination.perpage
-    const navigate = useNavigate()
-
-
-    const pageChange = (_page: number) => {
-        if (_page != page) {
-            setPage(_page)
-            const params = new URLSearchParams(searchParams);
-            params.set('page', _page.toString())
-            const queryString = params.toString();
-            const updatedPath = queryString ? `${pathname}?${queryString}` : pathname;
-            navigate(updatedPath)
-            Util.returnTop()
-        }
-    }
-
-    const selectedUsers: User[] = users.slice((page - 1) * perPage, page * perPage);
 
     //  編集 
     const [editUser, setEditUser] = useState<User>(getDefaultUser())
@@ -68,8 +54,8 @@ export default function List(): ReactNode {
         }
     }
     const closeEditModal = () => {
+        bodyRef.current?.focus({ preventScroll: true });
         setEditUserModal(false)
-
     }
 
     // 削除
@@ -84,15 +70,69 @@ export default function List(): ReactNode {
         setDeleteUserModal(false)
     }
     const closeDeleteModal = () => {
+        bodyRef.current?.focus({ preventScroll: true });
         setDeleteUserModal(false)
     }
+
+    const columnHelper = createColumnHelper<User>();
+    const columns = [
+        columnHelper.accessor('id', {
+            header: tanStackSortableHeader("ID")
+        }),
+        columnHelper.accessor('name', {
+            header: tanStackSortableHeader("アカウント名")
+        }),
+        columnHelper.accessor('roles', {
+            header: 'ロール',
+            cell: (props) => (<ul>{props.getValue().map((role, index) =>
+                <CBadge key={index} color="success" shape="rounded-pill" className='me-1'>{role.name}</CBadge>
+            )}</ul>)
+        }),
+        columnHelper.accessor('email', {
+            header: tanStackSortableHeader('メールアドレス')
+        }),
+        columnHelper.accessor('last_login_at', {
+            header: tanStackSortableHeader('最終ログイン'),
+            cell: (props) => <>{props.getValue() ? Util.datetime(props.getValue()).toFormat('yyyy/MM/dd HH:mm') : ''}</>
+        }),
+        columnHelper.accessor('created_at', {
+            header: tanStackSortableHeader('作成日時'),
+            cell: (props) => <>{Util.datetime(props.getValue()).toFormat('yyyy/MM/dd HH:mm')}</>
+        }),
+        columnHelper.accessor('updated_at', {
+            header: tanStackSortableHeader('更新日時'),
+            cell: (props) => <>{Util.datetime(props.getValue()).toFormat('yyyy/MM/dd HH:mm')}</>
+        }),
+        columnHelper.display({
+            id: 'actions',
+            header: '操作',
+            cell: (props) => (<>
+                <CButton color='primary' className="mr-2" onClick={() => openEditModal(users[props.row.index])}>編集</CButton>
+                <CButton color='danger' onClick={() => openDeleteModal(users[props.row.index])}>削除</CButton>
+            </>)
+        })
+    ];
+    const table: Table<User> = useReactTable({
+        data: users,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        initialState: {
+            pagination: {
+                pageIndex: initialPage,
+                pageSize: perPage,
+            },
+            sorting: [{ id: "id", desc: false }],
+        }
+    });
 
     return (
         <>
             <Head title="管理者アカウント" />
             <EditModal user={editUser} isVisible={editUserModal} closeHandler={closeEditModal} updateHandler={updateUserHandler} />
             <DeleteModal user={deleteUser} isVisible={deleteUserModal} closeHandler={closeDeleteModal} deleteHandler={deleteUserHandler} />
-            <CCard className="mb-4">
+            <CCard className="mb-4" tabIndex={0} ref={bodyRef}>
                 <CCardHeader>
                     管理者アカウント一覧
                     <CButton color="warning" className="float-end" size="sm" onClick={() => openEditModal(getDefaultUser())}>
@@ -100,53 +140,35 @@ export default function List(): ReactNode {
                     </CButton>
                 </CCardHeader>
                 <CCardBody>
-                    <MyRcPager
-                        defaultCurrent={page}
-                        current={page}
-                        onChange={pageChange}
-                        pageSize={perPage}
-                        total={users.length}
-                    />
+                    <TanStackPagination table={table} onClick={Util.returnTop} className='mb-2' />
                     <CTable className='text-center'>
                         <CTableHead>
-                            <CTableRow>
-                                <CTableHeaderCell scope="col">#</CTableHeaderCell>
-                                <CTableHeaderCell scope="col">アカウント名</CTableHeaderCell>
-                                <CTableHeaderCell scope="col">ロール</CTableHeaderCell>
-                                <CTableHeaderCell scope="col">メールアドレス</CTableHeaderCell>
-                                <CTableHeaderCell scope="col">最終ログイン</CTableHeaderCell>
-                                <CTableHeaderCell scope="col">作成日時</CTableHeaderCell>
-                                <CTableHeaderCell scope="col">更新日時</CTableHeaderCell>
-                                <CTableHeaderCell scope="col">操作</CTableHeaderCell>
-                            </CTableRow>
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <CTableRow key={headerGroup.id}>
+                                    {headerGroup.headers.map((header) => (
+                                        <CTableHeaderCell key={header.id}>
+                                            {flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
+                                        </CTableHeaderCell>
+                                    ))}
+                                </CTableRow>
+                            ))}
                         </CTableHead>
                         <CTableBody>
-                            {selectedUsers.map((user, index) => (
-                                <CTableRow key={user.id}>
-                                    <CTableHeaderCell scope="row">{user.id}</CTableHeaderCell>
-                                    <CTableDataCell>{user.name}</CTableDataCell>
-                                    <CTableDataCell><ul>{user.roles.map((role, index) =>
-                                        <CBadge key={index} color="success" shape="rounded-pill" className='me-1'>{role.name}</CBadge>
-                                    )}</ul></CTableDataCell>
-                                    <CTableDataCell>{user.email}</CTableDataCell>
-                                    <CTableDataCell>{user.last_login_at ? Util.datetime(user.last_login_at).toFormat('yyyy/MM/dd HH:mm') : '--'}</CTableDataCell>
-                                    <CTableDataCell>{Util.datetime(user.created_at).toFormat('yyyy/MM/dd HH:mm')}</CTableDataCell>
-                                    <CTableDataCell>{Util.datetime(user.updated_at).toFormat('yyyy/MM/dd HH:mm')}</CTableDataCell>
-                                    <CTableDataCell className="text-nowrap">
-                                        <CButton color='primary' className="mr-2" onClick={() => openEditModal(user)}>編集</CButton>
-                                        <CButton color='danger' onClick={() => openDeleteModal(user)}>削除</CButton>
-                                    </CTableDataCell>
+                            {table.getRowModel().rows.map((row) => (
+                                <CTableRow key={row.id}>
+                                    {row.getVisibleCells().map((cell) => (
+                                        <CTableDataCell key={cell.id}>
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        </CTableDataCell>
+                                    ))}
                                 </CTableRow>
                             ))}
                         </CTableBody>
                     </CTable>
-                    <MyRcPager
-                        defaultCurrent={page}
-                        current={page}
-                        onChange={pageChange}
-                        pageSize={perPage}
-                        total={users.length}
-                    />
+                    <TanStackPagination table={table} onClick={Util.returnTop} className="mt-2" />
                 </CCardBody>
             </CCard>
         </>

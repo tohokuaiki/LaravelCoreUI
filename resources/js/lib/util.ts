@@ -19,7 +19,9 @@ const Util = {
     // Userがロールを持っているか
     hasRole: (user: User, roleName: string): boolean => user.roles.filter((_role, i) => _role.name === roleName).length > 0,
     // Window topに
-    returnTop: () => window.scrollTo({ top: 0, behavior: "smooth", }),
+    returnTop: () => {
+        setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth", }), 1);
+    },
     // 画像ファイルのチェック
     validateFile: (
         filetype: "image" | "file", { type, size, name }: File, config: Config

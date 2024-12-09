@@ -46,6 +46,7 @@ class UserRequest extends FormRequest
         switch ($method) {
             case "GET":
                 $rules = [];
+                break;
             case "POST":
                 $rules['email'][] =  'unique:users,email';
                 break;
