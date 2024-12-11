@@ -3,7 +3,7 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import useGlobalConstantsContext from '@/Contexts/GlobalConstants';
-import useImagePreview from '@/hooks/useImagePreview';
+import useFileRead from '@/hooks/useFileRead';
 import { CAlert, CFormInput } from '@coreui/react';
 import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
@@ -38,7 +38,7 @@ export default function UpdateProfileInformation({
 
     const profileImage = useRef<HTMLInputElement | null>(null);
     const [profileError, setProfileError] = useState<string[]>([])
-    const { imagePreview, readImagePreview } = useImagePreview(config);
+    const { fileBuffer: imagePreview, readFileBuffer: readImagePreview } = useFileRead("image", config);
     const [uploadFile, setUploadFile] = useState<File | null>(null);
 
     const submit: FormEventHandler = async (e) => {

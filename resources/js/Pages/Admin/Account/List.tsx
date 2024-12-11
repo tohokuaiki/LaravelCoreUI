@@ -106,10 +106,10 @@ export default function List(): ReactNode {
         columnHelper.display({
             id: 'actions',
             header: '操作',
-            cell: (props) => (<>
+            cell: (props) => (<div className='text-nowrap'>
                 <CButton color='primary' className="mr-2" onClick={() => openEditModal(users[props.row.index])}>編集</CButton>
                 <CButton color='danger' onClick={() => openDeleteModal(users[props.row.index])}>削除</CButton>
-            </>)
+            </div>)
         })
     ];
     const table: Table<User> = useReactTable({

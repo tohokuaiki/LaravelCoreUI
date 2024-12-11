@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
 export type DateTimeString = `${string}-${string}-${string} ${string}:${string}:${string}`;
+export type DateString = `${string}-${string}-${string}`;
 
 export type Role = {
     id: number;
@@ -23,6 +24,19 @@ export type Config = {
         image: FileRestricts;
         file: FileRestricts;
     }
+}
+
+export type JapanCityCode = {
+    code: number;
+    prefecture: string;
+    city_g: string;
+    city_g_kana: string;
+    city: string;
+    city_kana: string;
+    abolition_division_date: DateString;
+    abolition_division_yn: string;
+    created_at: DateTimeString;
+    updated_at: DateTimeString;
 }
 
 export type AxiosFormError = {

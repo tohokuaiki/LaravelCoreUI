@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\JapanCityCodeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -11,9 +12,11 @@ Route::get('/user', function (Request $request) {
 
 $admin_path = config('app.admin_path');
 Route::middleware('auth:sanctum')->prefix($admin_path)->group(function () use ($admin_path) {
-// Route::prefix($admin_path)->group(function () use ($admin_path) {
     Route::apiResource('/users', UserController::class);
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/japan-city-codes/{code?}', [JapanCityCodeController::class, 'show'])->name('japancitycode.show');
 });
+
+require_once __DIR__ . '/broadtools.php';

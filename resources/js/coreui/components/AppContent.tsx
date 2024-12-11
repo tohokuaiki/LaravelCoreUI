@@ -12,7 +12,7 @@ const AppContent = () => {
   const { ADMIN_PATH } = globalConstants; 
 
   return (
-    <CContainer className="px-4" lg>
+    <CContainer className="px-4">
       <Suspense fallback={<CSpinner color="primary" />}>
         <Routes>
           {routes.map((route, idx) => {
