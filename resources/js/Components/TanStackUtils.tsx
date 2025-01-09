@@ -33,7 +33,8 @@ export function tanStackSortableHeader<T>(label: string): (header: HeaderContext
         }
     }
 
-    return (header) => {
+    const SortableHeader = (header: HeaderContext<T, string | number>) => {
+
 
         const { column } = header;
 
@@ -47,7 +48,7 @@ export function tanStackSortableHeader<T>(label: string): (header: HeaderContext
             {order === false ? "" : sortSvg(order)}
         </div>
     }
-
+    return SortableHeader;
 }
 
 

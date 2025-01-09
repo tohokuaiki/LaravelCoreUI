@@ -30,7 +30,7 @@ import { AppHeaderDropdown } from './header/index'
 import { SideBarState } from './AppSidebar'
 
 const AppHeader = () => {
-  const headerRef = useRef()
+  const headerRef = useRef(null)
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
 
   const dispatch = useDispatch()
@@ -39,7 +39,7 @@ const AppHeader = () => {
   useEffect(() => {
     document.addEventListener('scroll', () => {
       headerRef.current &&
-        headerRef.current.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0)
+        (headerRef.current as HTMLElement).classList.toggle('shadow-sm', document.documentElement.scrollTop > 0)
     })
   }, [])
 

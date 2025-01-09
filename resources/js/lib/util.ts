@@ -1,5 +1,5 @@
 import { User } from "@/types";
-import { Config, DateTimeString, FileValidateResult } from "@/types/app"
+import { Config, DateString, DateTimeString, FileValidateResult } from "@/types/app"
 import { DateTime } from 'luxon';
 
 export const getDefaultUser = (): User => {
@@ -14,15 +14,23 @@ const Util = {
     // 透明な1x1のPNG画像
     transparentBase64:
         "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgkBDXz5ZQAAAABJRU5ErkJggg==",
-    japanPref: ['北海道','青森県','岩手県','宮城県','秋田県','山形県','福島県','茨城県','栃木県','群馬県','埼玉県','千葉県','東京都','神奈川県','新潟県','富山県','石川県','福井県','山梨県','長野県','岐阜県','静岡県','愛知県','三重県','滋賀県','京都府','大阪府','兵庫県','奈良県','和歌山県','鳥取県','島根県','岡山県','広島県','山口県','徳島県','香川県','愛媛県','高知県','福岡県','佐賀県','長崎県','熊本県','大分県','宮崎県','鹿児島県','沖縄県'],
+    japanPref: ['北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県', '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県', '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県', '静岡県', '愛知県', '三重県', '滋賀県', '京都府', '大阪府', '兵庫県', '奈良県', '和歌山県', '鳥取県', '島根県', '岡山県', '広島県', '山口県', '徳島県', '香川県', '愛媛県', '高知県', '福岡県', '佐賀県', '長崎県', '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県'],
     // DateTimeStringな文字列をDateTimeオブジェクトに変更
-    datetime: (datetimestring: DateTimeString): DateTime => DateTime.fromISO(datetimestring).setLocale('ja'),
+    datetime: (datetimestring: DateTimeString | DateString | null): DateTime => {
+        if (datetimestring === null){
+            return DateTime.now();
+        } else {
+            return DateTime.fromISO(datetimestring).setLocale('ja');
+        }
+    },
     // Userがロールを持っているか
     hasRole: (user: User, roleName: string): boolean => user.roles.filter((_role, i) => _role.name === roleName).length > 0,
     // Window topに
     returnTop: () => {
         setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth", }), 1);
     },
+    // now
+    now: DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss') as DateTimeString,
     // 画像ファイルのチェック
     validateFile: (
         filetype: "image" | "file", { type, size, name }: File, config: Config
@@ -53,14 +61,14 @@ const Util = {
         return errors;
     },
     isAsciiOnly: (input: string): boolean => {
-        return /^[\x00-\x7F]*$/.test(input);
+        return /^[\x20-\x7E]*$/.test(input); 
     },
     toUnicodeEscaped: (input: string | number | undefined | null): string | number => {
         if (typeof (input) === 'number') return input;
 
         if (!input) return "";
 
-        if (Util.isAsciiOnly(input)) return input ;
+        if (Util.isAsciiOnly(input)) return input;
 
         return Array.from(input)
             .map((char) => {

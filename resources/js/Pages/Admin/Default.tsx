@@ -51,7 +51,7 @@ const Default = ({
             axios.interceptors.request.eject(requestInterceptor);
             axios.interceptors.response.eject(responseInterceptor);
         };
-    }, []);
+    }, [cookies]);
 
     useEffect(() => {
         (async () => {

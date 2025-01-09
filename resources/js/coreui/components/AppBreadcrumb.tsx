@@ -1,14 +1,14 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
 
-import routes, { RouteProp } from '@/routes/admin'
+import routes, { RouteProp } from '@/coreui/routes'
 
 import { CBreadcrumb, CBreadcrumbItem } from '@coreui/react'
 import useGlobalConstantsContext from '@/Contexts/GlobalConstants'
 
 type BreadCrumbElement = {
   pathname: string;
-  name: String;
+  name: string;
   active: boolean;
 }
 
@@ -19,7 +19,7 @@ const AppBreadcrumb = () => {
 
   const currentLocation = useLocation().pathname
 
-  const getRouteName = (pathname: string, routes: RouteProp[]): String => {
+  const getRouteName = (pathname: string, routes: RouteProp[]): string => {
     const currentRoute = routes.find((route) => route.path === pathname)
     return currentRoute ? currentRoute.name : ""
   }
@@ -30,7 +30,7 @@ const AppBreadcrumb = () => {
     (location.startsWith(ADMIN_PATH) ? location.slice(ADMIN_PATH.length) : location)
       .split('/').reduce((prev, curr, index, array) => {
         const currentPathname = `${prev}/${curr}`
-        const routeName: String = getRouteName(currentPathname, routes)
+        const routeName: string = getRouteName(currentPathname, routes)
         routeName &&
           breadcrumbs.push({
             pathname: ADMIN_PATH + currentPathname,

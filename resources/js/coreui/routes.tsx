@@ -53,8 +53,8 @@ const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 
 export type RouteProp = {
-  path: String;
-  name: String;
+  path: string;
+  name: string;
   element: LazyExoticComponent<()=> ReactNode>
   exact?: boolean;
 }
