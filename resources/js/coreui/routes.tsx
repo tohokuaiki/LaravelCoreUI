@@ -1,3 +1,4 @@
+import { RouteProp } from '@/types/coreui'
 import React, { LazyExoticComponent, ReactNode } from 'react'
 
 const Home = React.lazy(()=> import ('@/Pages/Admin/Home'))
@@ -51,13 +52,6 @@ const Modals = React.lazy(() => import('./views/notifications/modals/Modals'))
 const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
 
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
-
-export type RouteProp = {
-  path: string;
-  name: string;
-  element: LazyExoticComponent<()=> ReactNode>
-  exact?: boolean;
-}
 
 const routes:RouteProp[] = [
   { path: '/', name: 'Top', element: Home },

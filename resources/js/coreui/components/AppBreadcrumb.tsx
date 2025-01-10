@@ -1,10 +1,11 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
 
-import routes, { RouteProp } from '@/coreui/routes'
+import routes from '@/routes/admin'
 
 import { CBreadcrumb, CBreadcrumbItem } from '@coreui/react'
 import useGlobalConstantsContext from '@/Contexts/GlobalConstants'
+import { RouteProp } from '@/types/coreui'
 
 type BreadCrumbElement = {
   pathname: string;

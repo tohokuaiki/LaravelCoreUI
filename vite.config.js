@@ -16,6 +16,10 @@ export default defineConfig({
         }),
         react(),
     ],
+    build: {
+        rollupOptions: {
+        }
+    },
     server: {
         host: true,
         hmr: {
