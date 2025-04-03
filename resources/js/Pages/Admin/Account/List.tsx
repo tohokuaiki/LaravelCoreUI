@@ -4,14 +4,15 @@ import { CCard, CCardHeader, CCardBody, CTable, CTableBody, CTableDataCell, CTab
 import { Head } from '@inertiajs/react';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import useGlobalConstantsContext from '@/Contexts/GlobalConstants';
-import { useLocation } from 'react-router-dom';
 import EditModal from './EditModal';
 import DeleteModal from './DeleteModal';
 import axios from 'axios';
 import { cilPencil } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
-import { createColumnHelper, flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, Table, useReactTable } from '@tanstack/react-table';
-import {TanStackPagination , tanStackSortableHeader} from '@/Components/TanStackUtils';
+import { CellContext, ColumnDef, createColumnHelper, flexRender, PaginationState, SortingState } from '@tanstack/react-table';
+import { TanStackPagination, TanStackSortingButton } from '@/Components/TanStackUtils';
+import { getInitialSorting, getInitialPagination, useTanStackSortableTable } from '@/hooks/useTanStackSortableTable';
+import { DateTimeString, Role } from '@/types/app';
 
 
 export default function List(): ReactNode {
@@ -30,13 +31,57 @@ export default function List(): ReactNode {
             }
         })()
     }, [])
-
-    const location = useLocation()
-    const searchParams = new URLSearchParams(location.search)
-    const pathname = location.pathname
-    const p: number = Number(searchParams.get('page'))
-    const initialPage: number = p > 0 ? p - 1 : 0
-    const perPage: number = config.pagination.perpage
+    const [sorting, setSorting] = useState<SortingState>(getInitialSorting());
+    const [pagination, setPagination] = useState<PaginationState>(getInitialPagination(config.pagination.perpage));
+    const columnHelper = createColumnHelper<User>();
+    const columns:
+        ColumnDef<User, number>[] |
+        ColumnDef<User, string>[] |
+        ColumnDef<User, Role[]>[] |
+        ColumnDef<User, never>[] | /** @todo remove never */
+        ColumnDef<User, DateTimeString>[]
+        = [
+            columnHelper.accessor('id', {
+                header: TanStackSortingButton<User, number>("ID", setSorting)
+            }),
+            columnHelper.accessor('name', {
+                header: TanStackSortingButton<User, string>("アカウント名", setSorting),
+            }),
+            columnHelper.accessor('roles', {
+                header: 'ロール',
+                cell: (props: CellContext<User, Role[]>) => (<ul>{(props.getValue()).map((role, index) =>
+                    <CBadge key={index} color="success" shape="rounded-pill" className='me-1'>{role.name}</CBadge>
+                )}</ul>)
+            }),
+            columnHelper.accessor('email', {
+                header: TanStackSortingButton<User, string>('メールアドレス', setSorting)
+            }),
+            columnHelper.accessor('last_login_at', {
+                header: TanStackSortingButton<User, DateTimeString | null>('最終ログイン', setSorting),
+                cell: (props) => <>{props.getValue() ? Util.datetime(props.getValue()).toFormat('yyyy/MM/dd HH:mm') : ''}</>
+            }),
+            columnHelper.accessor('created_at', {
+                header: TanStackSortingButton<User, DateTimeString>('作成日時', setSorting),
+                cell: (props) => <>{Util.datetime(props.getValue()).toFormat('yyyy/MM/dd HH:mm')}</>
+            }),
+            columnHelper.accessor('updated_at', {
+                header: TanStackSortingButton<User, DateTimeString>('更新日時', setSorting),
+                cell: (props) => <>{Util.datetime(props.getValue()).toFormat('yyyy/MM/dd HH:mm')}</>
+            }),
+            columnHelper.display({
+                id: 'actions',
+                header: '操作',
+                cell: (props: CellContext<User, unknown>) => (<div className='text-nowrap'>
+                    <CButton color='primary' className="mr-2" onClick={() => openEditModal(users[props.row.index])}>編集</CButton>
+                    <CButton color='danger' onClick={() => openDeleteModal(users[props.row.index])}>削除</CButton>
+                </div>)
+            })
+        ];
+    const table = useTanStackSortableTable({
+        data: users,
+        columns,
+        state: { pagination, sorting }
+    });
 
     //  編集 
     const [editUser, setEditUser] = useState<User>(getDefaultUser())
@@ -74,59 +119,6 @@ export default function List(): ReactNode {
         setDeleteUserModal(false)
     }
 
-    const columnHelper = createColumnHelper<User>();
-    const columns = [
-        columnHelper.accessor('id', {
-            header: tanStackSortableHeader("ID")
-        }),
-        columnHelper.accessor('name', {
-            header: tanStackSortableHeader("アカウント名")
-        }),
-        columnHelper.accessor('roles', {
-            header: 'ロール',
-            cell: (props) => (<ul>{props.getValue().map((role, index) =>
-                <CBadge key={index} color="success" shape="rounded-pill" className='me-1'>{role.name}</CBadge>
-            )}</ul>)
-        }),
-        columnHelper.accessor('email', {
-            header: tanStackSortableHeader('メールアドレス')
-        }),
-        columnHelper.accessor('last_login_at', {
-            header: tanStackSortableHeader('最終ログイン'),
-            cell: (props) => <>{props.getValue() ? Util.datetime(props.getValue()).toFormat('yyyy/MM/dd HH:mm') : ''}</>
-        }),
-        columnHelper.accessor('created_at', {
-            header: tanStackSortableHeader('作成日時'),
-            cell: (props) => <>{Util.datetime(props.getValue()).toFormat('yyyy/MM/dd HH:mm')}</>
-        }),
-        columnHelper.accessor('updated_at', {
-            header: tanStackSortableHeader('更新日時'),
-            cell: (props) => <>{Util.datetime(props.getValue()).toFormat('yyyy/MM/dd HH:mm')}</>
-        }),
-        columnHelper.display({
-            id: 'actions',
-            header: '操作',
-            cell: (props) => (<div className='text-nowrap'>
-                <CButton color='primary' className="mr-2" onClick={() => openEditModal(users[props.row.index])}>編集</CButton>
-                <CButton color='danger' onClick={() => openDeleteModal(users[props.row.index])}>削除</CButton>
-            </div>)
-        })
-    ];
-    const table: Table<User> = useReactTable({
-        data: users,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        initialState: {
-            pagination: {
-                pageIndex: initialPage,
-                pageSize: perPage,
-            },
-            sorting: [{ id: "id", desc: false }],
-        }
-    });
-
     return (
         <>
             <Head title="管理者アカウント" />
@@ -140,7 +132,7 @@ export default function List(): ReactNode {
                     </CButton>
                 </CCardHeader>
                 <CCardBody>
-                    <TanStackPagination table={table} onClick={Util.returnTop} className='mb-2' />
+                    <TanStackPagination table={table} onClick={Util.returnTop} className='mb-2' setPagination={setPagination} />
                     <CTable className='text-center'>
                         <CTableHead>
                             {table.getHeaderGroups().map((headerGroup) => (
@@ -168,7 +160,7 @@ export default function List(): ReactNode {
                             ))}
                         </CTableBody>
                     </CTable>
-                    <TanStackPagination table={table} onClick={Util.returnTop} className="mt-2" />
+                    <TanStackPagination table={table} onClick={Util.returnTop} className="mt-2" setPagination={setPagination} />
                 </CCardBody>
             </CCard>
         </>

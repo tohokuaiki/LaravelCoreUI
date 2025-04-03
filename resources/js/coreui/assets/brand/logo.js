@@ -1,5 +1,7 @@
-export const logo = [
-  '599 116',
+export function logo(width: number = 116, height: number = 599): string[] {
+
+return [
+  `${height} ${width}`,
   `<g>
     <g fill="none" fill-rule="nonzero">
       <g style="fill:#80d0ff;">
@@ -16,3 +18,4 @@ export const logo = [
     </g>
   </g>`,
 ]
+}

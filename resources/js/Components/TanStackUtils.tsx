@@ -1,5 +1,5 @@
-import { Column, Header, HeaderContext, SortDirection, Table } from "@tanstack/react-table";
-import { ReactElement, ReactNode } from "react";
+import { HeaderContext, PaginationState, SortDirection, SortingState, Table } from "@tanstack/react-table";
+import { CSSProperties, Dispatch, ReactElement, ReactNode, SetStateAction } from "react";
 
 
 
@@ -12,7 +12,7 @@ const sortSvg = (sort: SortDirection): ReactNode => {
             height="24"
             style={{ display: "inline" }}
         >
-            {sort === "desc" ? (
+            {sort === "asc" ? (
                 <path d="M7 10l5 5 5-5z" />
             ) : (
                 <path d="M7 14l5-5 5 5z" />
@@ -22,46 +22,52 @@ const sortSvg = (sort: SortDirection): ReactNode => {
     );
 }
 
-export function tanStackSortableHeader<T>(label: string): (header: HeaderContext<T, string | number>) => void {
+const sortDirSvg = (sort: SortDirection, isTarget: boolean): ReactNode => {
 
-    const sortHandler = (column: Column<T, string | number>) => {
-        if (column.getIsSorted() === "desc") {
-            column.toggleSorting(false);
-        }
-        else {
-            column.toggleSorting(true); // first click is DESC
-        }
-    }
+    const upperColor: string = isTarget && sort == "desc" ? "#000" : "#ccc";
+    const lowerColor: string = isTarget && sort == "asc" ? "#000" : "#ccc";
 
-    const SortableHeader = (header: HeaderContext<T, string | number>) => {
+    const style: CSSProperties = {
+        display: "inline",
+        height: "1em",
+        paddingLeft: "0.5em"
+    };
 
-
-        const { column } = header;
-
-        const onClick = () => {
-            sortHandler(column);
-        }
-        const order: SortDirection | false = column.getIsSorted();
-
-        return <div onClick={onClick} style={{ cursor: "pointer" }}>
-            {label}
-            {order === false ? "" : sortSvg(order)}
-        </div>
-    }
-    return SortableHeader;
+    return <svg xmlns="http://www.w3.org/2000/svg" focusable="false" viewBox="0 0 12 12" style={style}>
+        <path fill="none" stroke={upperColor} strokeLinecap="round" d="M2.5 4L5.6.9c.2-.2.5-.2.7 0L9.5 4" />
+        <path fill="none" stroke={lowerColor} strokeLinecap="round" d="M2.5 8l3.1 3.1c.2.2.5.2.7 0L9.5 8" />
+    </svg>;
 }
 
+export function TanStackSortingButton<T, TData>(label: string, setSorting: Dispatch<SetStateAction<SortingState>>)
+    : ((header: HeaderContext<T, TData>) => void) {
 
-export function TanStackPagination<T>({ table, pageWidth = 3, className = "", onClick = () => void (0) }:
+    const button = (header: HeaderContext<T, TData>) => {
+        const { column } = header;
+        const isTarget: boolean = column.getIsSorted() !== false;
+        const sortDir: SortDirection = isTarget ? (column.getIsSorted() === "desc" ? "asc" : "desc") : "desc";
+
+        return (
+            <button className="pl-0"
+                onClick={() => setSorting([{ id: column.id, desc: sortDir === "desc" }])}>
+                {label}
+                {sortDirSvg(sortDir, isTarget)}
+            </button>
+        );
+    };
+    return button;
+};
+
+export function TanStackPagination<T>({ table, pageWidth = 3, className = "", setPagination, onClick = () => { } }:
     {
         table: Table<T>;
         pageWidth?: number;
         className?: string;
+        setPagination: Dispatch<SetStateAction<PaginationState>>;
         onClick?: () => void;
     }
 
 ): ReactElement {
-
 
     const currentPage: number = table.getState().pagination.pageIndex;
     const totalPage: number = table.getPageCount();
@@ -71,8 +77,14 @@ export function TanStackPagination<T>({ table, pageWidth = 3, className = "", on
             <li className={`page-item ${table.getCanPreviousPage() ? '' : 'disabled'}`}>
                 <button
                     className="page-link"
-                    onClick={() => { table.firstPage(); onClick(); }}
                     disabled={!table.getCanPreviousPage()}
+                    onClick={() => {
+                        setPagination((prev) => ({
+                            ...prev,
+                            pageIndex: 0
+                        }))
+                        onClick();
+                    }}
                 >
                     &laquo;
                 </button>
@@ -80,7 +92,13 @@ export function TanStackPagination<T>({ table, pageWidth = 3, className = "", on
             <li className={`page-item ${table.getCanPreviousPage() ? '' : 'disabled'}`}>
                 <button
                     className="page-link"
-                    onClick={() => { table.previousPage(); onClick(); }}
+                    onClick={() => {
+                        setPagination((prev) => ({
+                            ...prev,
+                            pageIndex: prev.pageIndex - 1
+                        }))
+                        onClick();
+                    }}
                     disabled={!table.getCanPreviousPage()}
                 >
                     {'<'}
@@ -89,7 +107,13 @@ export function TanStackPagination<T>({ table, pageWidth = 3, className = "", on
             {currentPage - pageWidth > 0 ? <li className="page-jump-prev">
                 <button
                     className="page-item-link"
-                    onClick={() => { table.setPageIndex(currentPage - pageWidth - 1); onClick(); }}
+                    onClick={() => {
+                        setPagination((prev) => ({
+                            ...prev,
+                            pageIndex: currentPage - pageWidth - 1
+                        }))
+                        onClick();
+                    }}
                 ></button>
             </li> : ''}
             {table.getPageOptions().map((page) => {
@@ -98,7 +122,13 @@ export function TanStackPagination<T>({ table, pageWidth = 3, className = "", on
                         <li key={page} className={`page-item ${currentPage === page ? 'active' : ''}`}>
                             <button
                                 className="page-link"
-                                onClick={() => { table.setPageIndex(page);; onClick(); }}
+                                onClick={() => {
+                                    setPagination((prev) => ({
+                                        ...prev,
+                                        pageIndex: page
+                                    }))
+                                    onClick();
+                                }}
                                 disabled={currentPage === page}
                             >{page + 1}</button>
                         </li>)
@@ -106,13 +136,25 @@ export function TanStackPagination<T>({ table, pageWidth = 3, className = "", on
             {totalPage - currentPage - 1 > pageWidth ? <li className="page-jump-next">
                 <button
                     className="page-item-link"
-                    onClick={() => { table.setPageIndex(currentPage + pageWidth + 1); onClick(); }}
+                    onClick={() => {
+                        setPagination((prev) => ({
+                            ...prev,
+                            pageIndex: currentPage + pageWidth + 1
+                        }))
+                        onClick();
+                    }}
                 ></button>
             </li> : ''}
             <li className={`page-item ${table.getCanNextPage() ? '' : 'disabled'}`}>
                 <button
                     className="page-link"
-                    onClick={() => { table.nextPage(); onClick(); }}
+                    onClick={() => {
+                        setPagination((prev) => ({
+                            ...prev,
+                            pageIndex: prev.pageIndex + 1
+                        }))
+                        onClick();
+                    }}
                     disabled={!table.getCanNextPage()}
                 >
                     {'>'}
@@ -121,7 +163,13 @@ export function TanStackPagination<T>({ table, pageWidth = 3, className = "", on
             <li className={`page-item ${table.getCanNextPage() ? '' : 'disabled'}`}>
                 <button
                     className="page-link"
-                    onClick={() => { table.lastPage(); onClick(); }}
+                    onClick={() => {
+                        setPagination((prev) => ({
+                            ...prev,
+                            pageIndex: table.getPageCount() - 1
+                        }))
+                        onClick();
+                    }}
                     disabled={!table.getCanNextPage()}
                 >
                     &raquo;
