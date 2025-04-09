@@ -1,6 +1,6 @@
 import useGlobalConstantsContext from "@/Contexts/GlobalConstants";
 import Util from "@/lib/util";
-import { AxiosFormError } from "@/types/app";
+import { LaravelFormError } from "@/types/app";
 import { User } from "@/types/index"
 import { CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CButton, CFormInput, CCol, CRow, CFormSwitch, CAlert, CForm } from "@coreui/react"
 import axios from "axios";
@@ -30,7 +30,7 @@ export default function EditModal({
     }, [user]);
 
     // error
-    const [errors, setErrors] = useState<AxiosFormError>({});
+    const [errors, setErrors] = useState<LaravelFormError>({});
 
     const updateUserInfo = async () => {
         setErrors({});

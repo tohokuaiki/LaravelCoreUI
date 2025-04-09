@@ -9,7 +9,7 @@ import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { ChangeEvent, FormEventHandler, useRef, useState } from 'react';
-import { AxiosFormError, FileValidateResult } from '@/types/app';
+import { LaravelFormError, FileValidateResult } from '@/types/app';
 import { User } from '@/types';
 import { ToastResult } from '@/Components/ToastResult';
 import { useToastResultContext } from '@/Contexts/ToastResultsContext';
@@ -34,7 +34,7 @@ export default function UpdateProfileInformation({
     const { setToast } = useToastResultContext();
 
     // server-side error
-    const [ajaxErrors, setAjaxErrors] = useState<AxiosFormError>({});
+    const [ajaxErrors, setAjaxErrors] = useState<LaravelFormError>({});
 
     const profileImage = useRef<HTMLInputElement | null>(null);
     const [profileError, setProfileError] = useState<string[]>([])

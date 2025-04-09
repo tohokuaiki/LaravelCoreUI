@@ -39,7 +39,7 @@ export type JapanCityCode = {
     updated_at: DateTimeString;
 }
 
-export type AxiosFormError = {
+export type LaravelFormError = {
     [key: string]: string[];
 }
 

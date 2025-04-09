@@ -1,6 +1,6 @@
 import { ErrorMessage } from "@/Components/InputError";
 import Util from "@/lib/util";
-import { AxiosFormError } from "@/types/app";
+import { LaravelFormError } from "@/types/app";
 import { User } from "@/types/index"
 import { CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CButton, CCol, CRow, CBadge, CAlert } from "@coreui/react"
 import axios from "axios";
@@ -19,7 +19,7 @@ export default function DeleteModal({
     }): ReactNode {
 
     const { setToast } = useToastResultContext();
-    const [errors, setErrors] = useState<AxiosFormError>({});
+    const [errors, setErrors] = useState<LaravelFormError>({});
 
     const deleteDo = async () => {
         setErrors({});
