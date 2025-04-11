@@ -2,6 +2,23 @@ import { DateTime } from 'luxon';
 export type DateTimeString = `${string}-${string}-${string} ${string}:${string}:${string}`;
 export type DateString = `${string}-${string}-${string}`;
 
+export type WithTimestamps = {
+    created_at: Date | null;
+    updated_at: Date | null;
+}
+
+export type User = {
+    id: number;
+    name: string;
+    email: string;
+    email_verified_at: Date | null;
+    password?: string | undefined;
+    password_confirmation?: string | undefined;
+    profile_image_url?: string ;
+    last_login_at: Date | null;
+    roles: Role[];
+} & WithTimestamps;
+
 export type Role = {
     id: number;
     name: string;
@@ -9,6 +26,14 @@ export type Role = {
     created_at: DateTimeString;
     updated_at: DateTimeString;
 }
+
+export type PageProps<
+    T extends Record<string, unknown> = Record<string, unknown>,
+> = T & {
+    auth: {
+        user: User;
+    };
+};
 
 type FileRestricts = {
     extensions: string[];

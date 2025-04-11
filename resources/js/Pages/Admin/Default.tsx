@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { CookiesProvider, useCookies } from 'react-cookie';
 import axios from 'axios';
 import { ToastResultProvider } from '@/Contexts/ToastResultsContext';
+import Util from '@/lib/util';
 
 const Default = ({
     ADMIN_PATH,
@@ -16,6 +17,7 @@ const Default = ({
 ) => {
 
     const user = usePage().props.auth.user;
+    Util.castDates(user, ['email_verified_at', 'last_login_at']);
     const globalConstants: GlobalConstantsType = {
         user, ADMIN_PATH, config, mustVerifyEmail, roles,
     }
@@ -27,7 +29,9 @@ const Default = ({
         const requestInterceptor = axios.interceptors.request.use(
             (config) => {
                 config.headers!['X-XSRF-TOKEN'] = cookies['XSRF-TOKEN']
-                setLoading(true);
+                if (!config.headers['X-Skip-Loading']) {
+                    setLoading(true);
+                }
                 return config;
             },
             (error) => {

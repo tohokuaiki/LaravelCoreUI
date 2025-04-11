@@ -1,5 +1,5 @@
 import useGlobalConstantsContext from "@/Contexts/GlobalConstants";
-import Util from "@/lib/util";
+import Util, { CONSTANT } from "@/lib/util";
 import { LaravelFormError } from "@/types/app";
 import { User } from "@/types/index"
 import { CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CButton, CFormInput, CCol, CRow, CFormSwitch, CAlert, CForm } from "@coreui/react"
@@ -9,6 +9,7 @@ import { getDefaultUser } from "@/lib/util";
 import { ErrorMessage } from "@/Components/InputError";
 import { useToastResultContext } from "@/Contexts/ToastResultsContext";
 import { ToastResult } from "@/Components/ToastResult";
+import { DateTime } from "luxon";
 
 export default function EditModal({
     user, isVisible, closeHandler, updateHandler
@@ -41,7 +42,7 @@ export default function EditModal({
                 url: isNew ? route('users.store') : route('users.update', user.id),
                 data: _user
             });
-            updateHandler(resp.data as User, isNew)
+            updateHandler(Util.castDates(resp.data as User, ['email_verified_at', 'last_login_at']), isNew)
             setToast(ToastResult(resp.data.name + "のアカウント情報を保存しました。"));
         } catch (e) {
             if (axios.isAxiosError(e)) {
@@ -146,11 +147,11 @@ export default function EditModal({
                 {_user.id > 0 ? <>
                     <CRow className="mb-3 mt-4">
                         <CCol sm={4}>作成日時</CCol>
-                        <CCol sm={8}>{Util.datetime(_user.created_at).toFormat('yyyy-MM-dd HH:mm:ss')}</CCol>
+                        <CCol sm={8}>{DateTime.fromJSDate(_user.created_at ?? new Date()).toFormat(CONSTANT.FORMAT_DATETIME)}</CCol>
                     </CRow>
                     <CRow className="mb-3">
                         <CCol sm={4}>更新日時</CCol>
-                        <CCol sm={8}>{Util.datetime(_user.updated_at).toFormat('yyyy-MM-dd HH:mm:ss')}</CCol>
+                        <CCol sm={8}>{DateTime.fromJSDate(_user.updated_at ?? new Date()).toFormat(CONSTANT.FORMAT_DATETIME)}</CCol>
                     </CRow>
                 </> : ""}
             </CModalBody>

@@ -13,6 +13,7 @@ import { LaravelFormError, FileValidateResult } from '@/types/app';
 import { User } from '@/types';
 import { ToastResult } from '@/Components/ToastResult';
 import { useToastResultContext } from '@/Contexts/ToastResultsContext';
+import Util from '@/lib/util';
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -50,9 +51,10 @@ export default function UpdateProfileInformation({
         Object.entries(data).forEach(entryset => formData.append(entryset[0], entryset[1]));
         try {
             const resp = await axios.post(route('profile.update'), formData);
-            const _user = resp.data.user as User;
-            setGlobalConstatns({ ...globalConstants, user: _user });
-            setData(_user);
+            const user = resp.data.user as User;
+            Util.castDates(user);
+            setGlobalConstatns({ ...globalConstants, user});
+            setData(user);
             setToast(ToastResult("ユーザー情報を登録しました。"));
         } catch (e) {
             if (axios.isAxiosError(e)) {
