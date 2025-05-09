@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   CAvatar,
   CBadge,
@@ -8,7 +7,6 @@ import {
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
-  CNavLink,
 } from '@coreui/react'
 import {
   cilBell,
@@ -23,9 +21,7 @@ import {
   cilExitToApp,
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
-import { useForm, usePage } from '@inertiajs/react';
-import { Link } from 'react-router-dom'
-import NavLink from '@/Components/NavLink'
+import { Link, useForm } from '@inertiajs/react';
 import useGlobalConstantsContext from '@/Contexts/GlobalConstants'
 
 const AppHeaderDropdown = () => {
@@ -74,7 +70,7 @@ const AppHeaderDropdown = () => {
         </CDropdownItem>
         <CDropdownHeader className="bg-body-secondary fw-semibold my-2">Settings</CDropdownHeader>
         <CDropdownItem as="button">
-          <Link to={`${ADMIN_PATH}/profile`} className='in-link'>
+          <Link href={`${ADMIN_PATH}/profile`} className='in-link'>
             <CIcon icon={cilUser} className="me-2" />アカウント情報
           </Link>
         </CDropdownItem>

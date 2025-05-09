@@ -1,11 +1,11 @@
 import React from 'react'
-import { useLocation } from 'react-router-dom'
 
 import routes from '@/routes/admin'
 
 import { CBreadcrumb, CBreadcrumbItem } from '@coreui/react'
 import useGlobalConstantsContext from '@/Contexts/GlobalConstants'
 import { RouteProp } from '@/types/coreui'
+import { usePathname } from '@/hooks/useInertiaPage'
 
 type BreadCrumbElement = {
   pathname: string;
@@ -18,7 +18,7 @@ const AppBreadcrumb = () => {
   const {globalConstants} = useGlobalConstantsContext()
   const { ADMIN_PATH } = globalConstants; 
 
-  const currentLocation = useLocation().pathname
+  const currentLocation = usePathname();
 
   const getRouteName = (pathname: string, routes: RouteProp[]): string => {
     const currentRoute = routes.find((route) => route.path === pathname)

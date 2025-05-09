@@ -1,16 +1,8 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import Dropdown from '@/Components/Dropdown';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import { Link, usePage } from '@inertiajs/react';
-import React, { PropsWithChildren, ReactElement, ReactNode, Suspense, useState } from 'react';
+import { PropsWithChildren, ReactNode, Suspense, useState } from 'react';
 import { CSpinner, CToaster } from '@coreui/react';
 import { Provider } from 'react-redux'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { AppContent, AppSidebar, AppFooter, AppHeader } from '../../js/coreui/components/index'
+import { AppSidebar, AppFooter, AppHeader, AppContent } from '../../js/coreui/components/index'
 import store from '../coreui/store'
-import { useCookies } from 'react-cookie';
-import axios from "axios";
 import { useToastResultContext } from '@/Contexts/ToastResultsContext';
 
 export default function Authenticated({
@@ -25,7 +17,6 @@ export default function Authenticated({
 
     return (
         <>
-            <BrowserRouter>
                 <Provider store={store}>
                     <Suspense
                         fallback={
@@ -46,14 +37,13 @@ export default function Authenticated({
                                         </div>
                                     </header>
                                 )}
-                                <AppContent />
+                                <AppContent/>
                                 {children}
                             </div>
                             <AppFooter />
                         </div>
                     </Suspense>
                 </Provider>
-            </BrowserRouter>
             {/* 
             <div className="min-h-screen bg-gray-100">
             <nav className="border-b border-gray-100 bg-white">

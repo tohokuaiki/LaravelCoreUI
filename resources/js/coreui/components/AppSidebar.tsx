@@ -14,7 +14,7 @@ import CIcon from '@coreui/icons-react'
 import { AppSidebarNav } from './AppSidebarNav'
 
 import { logo } from '../assets/brand/logo'
-import { sygnet } from '../assets/brand/sygnet'
+import { logo_narrow } from '../assets/brand/logo_narrow'
 
 // sidebar nav config
 import navigation from '@/Components/AdminNav'
@@ -35,13 +35,13 @@ const AppSidebar = () => {
   const { ADMIN_PATH } = globalConstants; 
   
   navigation.map((item, index) => {
-    if (item.to && !item.to.startsWith(ADMIN_PATH)) {
-      item.to = ADMIN_PATH + item.to
+    if (item.href && !item.href.startsWith(ADMIN_PATH)) {
+      item.href = ADMIN_PATH + item.href
     }
     if (item.items) {
       item.items.map((_item, _index) => {
-        if (_item.to && !_item.to.startsWith(ADMIN_PATH)) {
-          _item.to = ADMIN_PATH + _item.to
+        if (_item.href && !_item.href.startsWith(ADMIN_PATH)) {
+          _item.href = ADMIN_PATH + _item.href
         }
       })
     }
@@ -62,7 +62,7 @@ const AppSidebar = () => {
       <CSidebarHeader className="border-bottom">
         <CSidebarBrand>
           <CIcon customClassName="sidebar-brand-full" icon={logo()} height={32} />
-          <CIcon customClassName="sidebar-brand-narrow" icon={sygnet} height={32} />
+          <CIcon customClassName="sidebar-brand-narrow" icon={logo_narrow()} height={32} />
         </CSidebarBrand>
         <CCloseButton
           className="d-lg-none"

@@ -1,6 +1,6 @@
-import { ColumnDef, ColumnSort, getCoreRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, RowData, SortingState, Table, TableOptions, useReactTable } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { ColumnDef, getCoreRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, RowData, SortingState, Table, useReactTable } from "@tanstack/react-table";
+import { useEffect } from "react";
+import { useSearchParams } from "./useInertiaPage";
 
 export function getInitialSorting({
     id: defaultId = "updated_at",
@@ -45,23 +45,21 @@ export function useTanStackSortableTable<TData extends RowData>({ data, columns,
     pageCount?: number;
 }): Table<TData> {
 
-    const [, setSearchParams] = useSearchParams()
+    const [searchParams, setSearchParams] = useSearchParams()
 
     const { pagination, sorting } = state;
 
     useEffect(() => {
         if (locationLink !== false) {
-            setSearchParams((prev) => {
-                const params = new URLSearchParams(prev)
-                params.set("sort", sorting[0].id)
-                params.set("order", sorting[0].desc ? "desc" : "asc")
-                if (pagination.pageIndex === 0) {
-                    params.delete("page")
-                } else {
-                    params.set("page", (pagination.pageIndex + 1).toString())
-                }
-                return params;
-            })
+            const params = new URLSearchParams(searchParams);
+            params.set("sort", sorting[0].id);
+            params.set("order", sorting[0].desc ? "desc" : "asc")
+            if (pagination.pageIndex === 0) {
+                params.delete("page")
+            } else {
+                params.set("page", (pagination.pageIndex + 1).toString())
+            }
+            setSearchParams(params);
         }
     }, [pagination, sorting, setSearchParams, locationLink])
 

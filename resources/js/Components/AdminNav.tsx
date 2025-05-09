@@ -27,11 +27,12 @@ export type CINavigation = {
   items?: CINavigation[];
 }
 
+import bt_nav from './Broadtools/AdminNav'
 let _nav: CINavigation[] = [
   {
     component: CNavItem,
     name: 'Home',
-    to: '/',
+    href: '/',
     icon: <CIcon icon={cilHome} customClassName="nav-icon" />,
   },
   {
@@ -43,9 +44,10 @@ let _nav: CINavigation[] = [
     component: CNavItem,
     name: '管理者アカウント一覧',
     role: 'admin',
-    to: '/admin/account',
+    href: '/admin/account',
     icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
   },
+  ...bt_nav,
 ];
 
 if (process.env.NODE_ENV === 'development') {

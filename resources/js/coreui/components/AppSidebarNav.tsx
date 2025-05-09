@@ -1,5 +1,4 @@
-import React, { ReactElement, useEffect, useLayoutEffect } from 'react'
-import { NavLink } from 'react-router-dom'
+import { ReactElement } from 'react'
 import PropTypes from 'prop-types'
 
 import SimpleBar from 'simplebar-react'
@@ -7,7 +6,7 @@ import 'simplebar-react/dist/simplebar.min.css'
 
 import { CBadge, CNavLink, CSidebarNav } from '@coreui/react'
 import { CIconType, CINavigation } from '@/Components/AdminNav'
-import { usePage } from '@inertiajs/react'
+import { Link } from '@inertiajs/react'
 import Util from '@/lib/util'
 import useGlobalConstantsContext from '@/Contexts/GlobalConstants'
 
@@ -58,10 +57,10 @@ export const AppSidebarNav = ({ items }:
     const Component = component
     return (
       <Component as="div" key={index}>
-        {rest.to || rest.href ? (
-          <CNavLink {...(rest.to && { as: NavLink })} {...rest}>
+        {rest.href ? (
+          <Link className="nav-link" href={rest.href} {...rest}>
             {navLink(name, icon, badge, indent)}
-          </CNavLink>
+          </Link>
         ) : (
           navLink(name, icon, badge, indent)
         )}
