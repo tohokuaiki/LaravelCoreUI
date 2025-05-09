@@ -1,14 +1,20 @@
-import { ColumnDef, getCoreRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, RowData, SortingState, Table, TableOptions, useReactTable } from "@tanstack/react-table";
+import { ColumnDef, ColumnSort, getCoreRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, RowData, SortingState, Table, TableOptions, useReactTable } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-export function getInitialSorting(): SortingState {
+export function getInitialSorting({
+    id: defaultId = "updated_at",
+    desc: defaultDesc = true
+}: {
+    id?: string;
+    desc?: boolean;
+} = {}): SortingState {
 
     const searchParams = new URLSearchParams(window.location.search);
 
     const initialSorting: SortingState = [{
-        id: searchParams.get('sort') || "updated_at",
-        desc: !searchParams.get('order') || searchParams.get('order') === "desc"
+        id: searchParams.get('sort') || defaultId,
+        desc: searchParams.get('order') ? searchParams.get('order') === "desc" : defaultDesc
     }];
     return initialSorting;
 }
@@ -22,13 +28,21 @@ export function getInitialPagination(pageSize: number = 20): PaginationState {
     return initalPagination;
 }
 
-export function useTanStackSortableTable<TData extends RowData, TValue>({ data, columns, state }: {
+export function useTanStackSortableTable<TData extends RowData>({ data, columns, state,
+    locationLink = true,
+    manualPagination,
+    pageCount
+}: {
     data: TData[];
-    columns: ColumnDef<TData, TValue>[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    columns: ColumnDef<TData, any>[];
     state: {
         pagination: PaginationState;
         sorting: SortingState;
-    }
+    },
+    locationLink?: boolean;
+    manualPagination?: boolean;
+    pageCount?: number;
 }): Table<TData> {
 
     const [, setSearchParams] = useSearchParams()
@@ -36,26 +50,30 @@ export function useTanStackSortableTable<TData extends RowData, TValue>({ data, 
     const { pagination, sorting } = state;
 
     useEffect(() => {
-        setSearchParams((prev) => {
-            const params = new URLSearchParams(prev)
-            params.set("sort", sorting[0].id)
-            params.set("order", sorting[0].desc ? "desc" : "asc")
-            if (pagination.pageIndex === 0) {
-                params.delete("page")
-            } else {
-                params.set("page", (pagination.pageIndex + 1).toString())
-            }
-            return params;
-        })
-    }, [pagination, sorting, setSearchParams])
+        if (locationLink !== false) {
+            setSearchParams((prev) => {
+                const params = new URLSearchParams(prev)
+                params.set("sort", sorting[0].id)
+                params.set("order", sorting[0].desc ? "desc" : "asc")
+                if (pagination.pageIndex === 0) {
+                    params.delete("page")
+                } else {
+                    params.set("page", (pagination.pageIndex + 1).toString())
+                }
+                return params;
+            })
+        }
+    }, [pagination, sorting, setSearchParams, locationLink])
 
     const table: Table<TData> = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        state: { pagination, sorting }
+        getSortedRowModel: manualPagination ? undefined : getSortedRowModel(),
+        state: { pagination, sorting },
+        manualPagination,
+        pageCount
     });
 
     return table;

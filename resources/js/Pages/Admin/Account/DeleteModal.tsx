@@ -1,5 +1,5 @@
 import { ErrorMessage } from "@/Components/InputError";
-import Util from "@/lib/util";
+import Util, { CONSTANT } from "@/lib/util";
 import { LaravelFormError } from "@/types/app";
 import { User } from "@/types/index"
 import { CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CButton, CCol, CRow, CBadge, CAlert } from "@coreui/react"
@@ -7,6 +7,7 @@ import axios from "axios";
 import { ReactNode, useState } from "react"
 import { useToastResultContext } from "@/Contexts/ToastResultsContext";
 import { ToastResult } from "@/Components/ToastResult";
+import { DateTime } from "luxon";
 
 export default function DeleteModal({
     user, isVisible, closeHandler, deleteHandler
@@ -75,11 +76,11 @@ export default function DeleteModal({
                 </CRow>
                 <CRow className="mb-3 mt-4">
                     <CCol sm={4}>作成日時</CCol>
-                    <CCol sm={8}>{Util.datetime(user.created_at).toFormat('yyyy-MM-dd HH:mm:ss')}</CCol>
+                    <CCol sm={8}>{DateTime.fromJSDate(user.created_at ?? new Date()).toFormat(CONSTANT.FORMAT_DATETIME)}</CCol>                    
                 </CRow>
                 <CRow className="mb-3">
                     <CCol sm={4}>更新日時</CCol>
-                    <CCol sm={8}>{Util.datetime(user.updated_at).toFormat('yyyy-MM-dd HH:mm:ss')}</CCol>
+                    <CCol sm={8}>{DateTime.fromJSDate(user.updated_at ?? new Date()).toFormat(CONSTANT.FORMAT_DATETIME)}</CCol>                    
                 </CRow>
 
             </CModalBody>

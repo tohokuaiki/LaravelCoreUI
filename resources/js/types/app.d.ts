@@ -7,6 +7,11 @@ export type WithTimestamps = {
     updated_at: Date | null;
 }
 
+export type Option = {
+    label: string;
+    value: string;
+}
+
 export type User = {
     id: number;
     name: string;
@@ -14,7 +19,7 @@ export type User = {
     email_verified_at: Date | null;
     password?: string | undefined;
     password_confirmation?: string | undefined;
-    profile_image_url?: string ;
+    profile_image_url?: string;
     last_login_at: Date | null;
     roles: Role[];
 } & WithTimestamps;

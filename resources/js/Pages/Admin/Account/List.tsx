@@ -29,7 +29,7 @@ export default function List(): ReactNode {
             const resp = await axios.get(route('users.index'))
             if (resp.status === 200) {
                 const _users: User[] = [];
-                (resp.data as User[]).forEach((user, i)=>{
+                (resp.data as User[]).forEach((user, i) => {
                     Util.castDates(user, ['last_login_at', 'email_verified_at']);
                     _users[i] = user;
                 })
@@ -40,53 +40,47 @@ export default function List(): ReactNode {
     const [sorting, setSorting] = useState<SortingState>(getInitialSorting());
     const [pagination, setPagination] = useState<PaginationState>(getInitialPagination(config.pagination.perpage));
     const columnHelper = createColumnHelper<User>();
-    const columns:
-        ColumnDef<User, number>[] |
-        ColumnDef<User, string>[] |
-        ColumnDef<User, Role[]>[] |
-        ColumnDef<User, never>[] | /** @todo remove never */
-        ColumnDef<User, Date>[]
-        = [
-            columnHelper.accessor('id', {
-                header: TanStackSortingButton<User, number>("ID", setSorting)
-            }),
-            columnHelper.accessor('name', {
-                header: TanStackSortingButton<User, string>("アカウント名", setSorting),
-            }),
-            columnHelper.accessor('roles', {
-                header: 'ロール',
-                cell: (props: CellContext<User, Role[]>) => (<ul>{(props.getValue()).map((role, index) =>
-                    <CBadge key={index} color="success" shape="rounded-pill" className='me-1'>{role.name}</CBadge>
-                )}</ul>)
-            }),
-            columnHelper.accessor('email', {
-                header: TanStackSortingButton<User, string>('メールアドレス', setSorting)
-            }),
-            columnHelper.accessor('last_login_at', {
-                header: TanStackSortingButton<User, Date | null>('最終ログイン', setSorting),
-                cell: (props) => {
-                    const prop = props.getValue();
-                    return prop ? DateTime.fromJSDate(prop).toFormat(CONSTANT.FORMAT_DATETIME): "-";
-                }
-                
-            }),
-            columnHelper.accessor('created_at', {
-                header: TanStackSortingButton<User, Date>('作成日時', setSorting),
-                cell: (props) => <>{DateTime.fromJSDate(props.getValue()).toFormat(CONSTANT.FORMAT_DATETIME)}</>
-            }),
-            columnHelper.accessor('updated_at', {
-                header: TanStackSortingButton<User, Date>('更新日時', setSorting),
-                cell: (props) => <>{DateTime.fromJSDate(props.getValue()).toFormat(CONSTANT.FORMAT_DATETIME)}</>
-            }),
-            columnHelper.display({
-                id: 'actions',
-                header: '操作',
-                cell: (props: CellContext<User, unknown>) => (<div className='text-nowrap'>
-                    <CButton color='primary' className="mr-2" onClick={() => openEditModal(users[props.row.index])}>編集</CButton>
-                    <CButton color='danger' onClick={() => openDeleteModal(users[props.row.index])}>削除</CButton>
-                </div>)
-            })
-        ];
+    const columns: (ColumnDef<User, number> | ColumnDef<User, string> | ColumnDef<User, Role[]> | ColumnDef<User, Date>)[] = [
+        columnHelper.accessor('id', {
+            header: TanStackSortingButton<User, number>("ID", setSorting)
+        }),
+        columnHelper.accessor('name', {
+            header: TanStackSortingButton<User, string>("アカウント名", setSorting),
+        }),
+        columnHelper.accessor('roles', {
+            header: 'ロール',
+            cell: (props: CellContext<User, Role[]>) => (<ul>{(props.getValue()).map((role, index) =>
+                <CBadge key={index} color="success" shape="rounded-pill" className='me-1'>{role.name}</CBadge>
+            )}</ul>)
+        }),
+        columnHelper.accessor('email', {
+            header: TanStackSortingButton<User, string>('メールアドレス', setSorting)
+        }),
+        columnHelper.accessor('last_login_at', {
+            header: TanStackSortingButton<User, Date | null>('最終ログイン', setSorting),
+            cell: (props) => {
+                const prop = props.getValue();
+                return prop ? DateTime.fromJSDate(prop).toFormat(CONSTANT.FORMAT_DATETIME) : "-";
+            }
+
+        }),
+        columnHelper.accessor('created_at', {
+            header: TanStackSortingButton<User, Date>('作成日時', setSorting),
+            cell: (props) => <>{DateTime.fromJSDate(props.getValue()).toFormat(CONSTANT.FORMAT_DATETIME)}</>
+        }),
+        columnHelper.accessor('updated_at', {
+            header: TanStackSortingButton<User, Date>('更新日時', setSorting),
+            cell: (props) => <>{DateTime.fromJSDate(props.getValue()).toFormat(CONSTANT.FORMAT_DATETIME)}</>
+        }),
+        columnHelper.display({
+            id: 'actions',
+            header: '操作',
+            cell: (props: CellContext<User, unknown>) => (<div className='text-nowrap'>
+                <CButton color='primary' className="mr-2" onClick={() => openEditModal(users[props.row.index])}>編集</CButton>
+                <CButton color='danger' onClick={() => openDeleteModal(users[props.row.index])}>削除</CButton>
+            </div>)
+        })
+    ];
     const table = useTanStackSortableTable({
         data: users,
         columns,
