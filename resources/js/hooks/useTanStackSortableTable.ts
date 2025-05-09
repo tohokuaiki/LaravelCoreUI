@@ -20,12 +20,13 @@ export function getInitialSorting({
 }
 
 
-export function getInitialPagination(pageSize: number = 20): PaginationState {
+export function getInitialPagination(pageSize: number = 20, pageIndex: number | null = null): PaginationState {
     const searchParams = new URLSearchParams(window.location.search);
-    const p: number = Number(searchParams.get('page') || "1")
-    const pageIndex = p > 0 ? p - 1 : 0;
-    const initalPagination: PaginationState = { pageIndex, pageSize };
-    return initalPagination;
+    if (pageIndex === null) {
+        const p: number = Number(searchParams.get('page') || "1")
+        pageIndex = p > 0 ? p - 1 : 0;
+    }
+    return { pageIndex, pageSize };
 }
 
 export function useTanStackSortableTable<TData extends RowData>({ data, columns, state,
@@ -61,7 +62,7 @@ export function useTanStackSortableTable<TData extends RowData>({ data, columns,
             }
             setSearchParams(params);
         }
-    }, [pagination, sorting, setSearchParams, locationLink])
+    }, [pagination, sorting, setSearchParams, searchParams, locationLink])
 
     const table: Table<TData> = useReactTable({
         data,

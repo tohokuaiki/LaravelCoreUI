@@ -1,4 +1,4 @@
-import { usePage, router } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import { useCallback, useMemo } from 'react';
 
 
@@ -9,7 +9,7 @@ export function usePathname(): string {
 
 export function useSearchParams(): [
     URLSearchParams,
-    (params: Record<string, any>, options?: object) => void
+    (params: URLSearchParams) => void
 ] {
     const { url } = usePage();
 
@@ -18,16 +18,10 @@ export function useSearchParams(): [
 
     const pathname = url.split('?')[0];
 
-    const setSearchParams = useCallback(
-        (params: Record<string, any>, options = {}) => {
-            router.get(pathname, params, {
-                preserveState: true,
-                replace: true,
-                ...options,
-            });
-        },
-        [pathname]
-    );
+    const setSearchParams = useCallback((params: URLSearchParams) => {
+        const newUrl = `${pathname}${params.toString() ? `?${params.toString()}` : ''}`;
+        window.history.replaceState(null, '', newUrl);
+    }, [pathname]);
 
     return [searchParams, setSearchParams];
 }

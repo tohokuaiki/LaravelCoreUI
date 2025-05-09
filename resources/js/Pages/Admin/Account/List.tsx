@@ -76,8 +76,8 @@ export default function List(): ReactNode {
             id: 'actions',
             header: '操作',
             cell: (props: CellContext<User, unknown>) => (<div className='text-nowrap'>
-                <CButton color='primary' className="mr-2" onClick={() => openEditModal(users[props.row.index])}>編集</CButton>
-                <CButton color='danger' onClick={() => openDeleteModal(users[props.row.index])}>削除</CButton>
+                <CButton size="sm" color='primary' className="mr-2" onClick={() => openEditModal(users[props.row.index])}>編集</CButton>
+                <CButton size="sm" color='danger' onClick={() => openDeleteModal(users[props.row.index])}>削除</CButton>
             </div>)
         })
     ];
@@ -136,6 +136,7 @@ export default function List(): ReactNode {
                     </CButton>
                 </CCardHeader>
                 <CCardBody>
+                    {users.length > 0 ? <>
                     <TanStackPagination table={table} onClick={Util.returnTop} className='mb-2' setPagination={setPagination} />
                     <CTable className='text-center'>
                         <CTableHead>
@@ -164,7 +165,8 @@ export default function List(): ReactNode {
                             ))}
                         </CTableBody>
                     </CTable>
-                    <TanStackPagination table={table} onClick={Util.returnTop} className="mt-2" setPagination={setPagination} />
+                    <TanStackPagination table={table} onClick={Util.returnTop} className="mt-2" setPagination={setPagination} /></>
+                     : "登録されているアカウントはありません。"}
                 </CCardBody>
             </CCard>
         </>
