@@ -10,7 +10,7 @@ import useGlobalConstantsContext from "@/Contexts/GlobalConstants";
 export default function Profile(): ReactNode {
 
     const { globalConstants } = useGlobalConstantsContext()
-    const { config, mustVerifyEmail  } = globalConstants;
+    const { mustVerifyEmail  } = globalConstants;
 
     return (
         <>

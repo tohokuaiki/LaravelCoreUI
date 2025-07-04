@@ -19,4 +19,3 @@ Route::middleware('auth:sanctum')->prefix($admin_path)->group(function () use ($
     Route::get('/japan-city-codes/{code?}', [JapanCityCodeController::class, 'show'])->name('japancitycode.show');
 });
 
-require_once __DIR__ . '/broadtools.php';

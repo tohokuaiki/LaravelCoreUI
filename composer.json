@@ -11,7 +11,9 @@
         "laravel-lang/lang": "^15.9",
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
+        "laravel/socialite": "*",
         "laravel/tinker": "^2.9",
+        "socialiteproviders/microsoft-azure": "*",
         "spatie/laravel-medialibrary": "^11.10",
         "spatie/laravel-permission": "^6.9",
         "tightenco/ziggy": "^2.0"
